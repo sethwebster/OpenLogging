@@ -13,7 +13,7 @@ namespace SethWebster.OpenLogging.Console
             while (true)
             {
                 string uri = "https://openlogging.azurewebsites.net/api";
-                uri = "http://localhost:60757/api/";
+                //uri = "http://localhost:60757/api/";
                 System.Console.WriteLine("Creating client to " + uri);
                 OpenLogging.Client.OpenLoggingClient cl = new Client.OpenLoggingClient(new Uri(uri));
                 cl.CreateClient(new SethWebster.OpenLogging.Models.Client()
