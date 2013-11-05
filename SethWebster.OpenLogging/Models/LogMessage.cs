@@ -19,5 +19,6 @@ namespace SethWebster.OpenLogging.Models
         public string Body { get; set; }
         public DateTimeOffset DateCreated { get; set; }
         public DateTimeOffset DateOfEvent { get; set; }
+        public Client Client { get; set; }
     }
 }

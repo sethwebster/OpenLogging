@@ -10,18 +10,39 @@ namespace SethWebster.OpenLogging.Console
     {
         static void Main(string[] args)
         {
-            OpenLogging.Client.OpenLoggingClient cl = new Client.OpenLoggingClient(new Guid("0a21dac6-f311-4887-96e7-fa59441efe21"), new Uri("http://localhost:60757/api"));
+            while (true)
+            {
+                string uri = "https://openlogging.azurewebsites.net/api";
+                uri = "http://localhost:60757/api/";
+                System.Console.WriteLine("Creating client to " + uri);
+                OpenLogging.Client.OpenLoggingClient cl = new Client.OpenLoggingClient(new Uri(uri));
+                cl.CreateClient(new SethWebster.OpenLogging.Models.Client()
+                {
+                    ClientName = "southwest"
+                }).ContinueWith(r =>
+                {
+                    System.Console.WriteLine("Client created.");
+                    var newcl = new Client.OpenLoggingClient(r.Result.CurrentApiKey, new Uri(uri));
+                    System.Console.WriteLine("Creating new log entry");
+                    newcl.NewLogEntry(new SethWebster.OpenLogging.Models.LogMessage
+                    {
+                        Category = "Error",
+                        Message = "Message 2",
+                        Title = "Big error"
+                    }).ContinueWith(rr =>
+                    {
+                        System.Console.WriteLine("Created");
+                        System.Console.WriteLine(rr.Result.LogMessageId);
+                        System.Console.WriteLine("Deleteing client");
+                        newcl.DeleteClient(r.Result).ContinueWith(rrr => {
+                            System.Console.WriteLine("Client deleted "+rrr);
+                        });
+                    });
+                });
 
-            var res = cl.NewLogEntry(new SethWebster.OpenLogging.Models.LogMessage
-            {
-                Category = "Error",
-                Message = "Message 2",
-                Title = "Big error"
-            }).ContinueWith(r =>
-            {
-                System.Console.WriteLine(r.Result.LogMessageId);
-            });
-            System.Console.ReadLine();
+
+                System.Console.ReadLine();
+            }
         }
     }
 }

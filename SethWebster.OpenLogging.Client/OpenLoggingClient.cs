@@ -17,6 +17,10 @@ namespace SethWebster.OpenLogging.Client
         {
 
         }
+        public OpenLoggingClient(Uri endpoint)
+        {
+            _endpoint = endpoint;
+        }
         public OpenLoggingClient(Guid apiKey)
         {
             _clientApiKey = apiKey;
@@ -30,13 +34,46 @@ namespace SethWebster.OpenLogging.Client
         public async Task<LogMessage> NewLogEntry(LogMessage message)
         {
             ValidateApiKey();
+            var res = await CreateItem<LogMessage>("/api/log", message);
+            return res;
+        }
+
+        public async Task<SethWebster.OpenLogging.Models.Client> CreateClient(SethWebster.OpenLogging.Models.Client client)
+        {
+            var res = await CreateItem<SethWebster.OpenLogging.Models.Client>("/api/clients", client);
+            return res;
+        }
+        public async Task<SethWebster.OpenLogging.Models.Client> DeleteClient(SethWebster.OpenLogging.Models.Client client)
+        {
+            var res = await DeleteItem<SethWebster.OpenLogging.Models.Client>("/api/clients", client.ClientId);
+            return res;
+        }
+
+        private async Task<T> CreateItem<T>(string actionUrl, T item)
+        {
             HttpClient cli = new HttpClient();
             cli.BaseAddress = _endpoint;
-            cli.DefaultRequestHeaders.Add("x-auth", _clientApiKey.ToString());
-            var res = await cli.PostAsJsonAsync<LogMessage>(new Uri("/api/log",UriKind.Relative), message);
+            if (_clientApiKey != Guid.Empty)
+            {
+                cli.DefaultRequestHeaders.Add("x-auth", _clientApiKey.ToString());
+            }
+            var res = await cli.PostAsJsonAsync<T>(new Uri(actionUrl, UriKind.Relative), item);
             var strRes = await res.Content.ReadAsStringAsync();
-            var message2 = JsonConvert.DeserializeObject<LogMessage>(strRes);
+            var message2 = JsonConvert.DeserializeObject<T>(strRes);
+            return message2;
+        }
 
+        private async Task<T> DeleteItem<T>(string actionUrl, int itemId)
+        {
+            HttpClient cli = new HttpClient();
+            cli.BaseAddress = _endpoint;
+            if (_clientApiKey != Guid.Empty)
+            {
+                cli.DefaultRequestHeaders.Add("x-auth", _clientApiKey.ToString());
+            }
+            var res = await cli.DeleteAsync(actionUrl + "?id=" + itemId);
+            var strRes = await res.Content.ReadAsStringAsync();
+            var message2 = JsonConvert.DeserializeObject<T>(strRes);
             return message2;
         }
 

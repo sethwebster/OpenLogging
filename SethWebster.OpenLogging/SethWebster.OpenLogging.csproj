@@ -168,7 +168,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="api\ClientsController.cs" />
-    <Compile Include="api\Log.cs" />
+    <Compile Include="api\LogController.cs" />
     <Compile Include="App_Start\BundleConfig.cs" />
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
@@ -182,6 +182,10 @@
     <Compile Include="Migrations\201311051812391_initial.cs" />
     <Compile Include="Migrations\201311051812391_initial.Designer.cs">
       <DependentUpon>201311051812391_initial.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201311052324261_Added-Client-FK.cs" />
+    <Compile Include="Migrations\201311052324261_Added-Client-FK.Designer.cs">
+      <DependentUpon>201311052324261_Added-Client-FK.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
@@ -252,6 +256,9 @@
   <ItemGroup>
     <EmbeddedResource Include="Migrations\201311051812391_initial.resx">
       <DependentUpon>201311051812391_initial.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201311052324261_Added-Client-FK.resx">
+      <DependentUpon>201311052324261_Added-Client-FK.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
