@@ -1,0 +1,24 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Linq;
+using System.Web;
+
+namespace SethWebster.OpenLogging.Models
+{
+    public class Client
+    {
+        public Client()
+        {
+            this.LogMessages = new Collection<LogMessage>();
+            this.DateCreated = DateTimeOffset.Now;
+            this.CurrentApiKey = Guid.NewGuid();
+        }
+        public int ClientId { get; set; }
+        public string ClientName { get; set; }
+        public Guid CurrentApiKey { get; set; }
+        public ICollection<LogMessage> LogMessages { get; set; }
+
+        public DateTimeOffset DateCreated { get; set; }
+    }
+}

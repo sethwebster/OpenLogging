@@ -1,0 +1,34 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2013
+VisualStudioVersion = 12.0.21005.1
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SethWebster.OpenLogging", "SethWebster.OpenLogging\SethWebster.OpenLogging.csproj", "{32F9DB7A-FB52-43E0-B45E-67B9CD6C84A8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SethWebster.OpenLogging.Client", "SethWebster.OpenLogging.Client\SethWebster.OpenLogging.Client.csproj", "{15A9B9F4-88DA-4359-A627-7E8CB37AC878}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SethWebster.OpenLogging.Console", "SethWebster.OpenLogging.Console\SethWebster.OpenLogging.Console.csproj", "{5B50EB83-9CB8-45C0-BC5E-56332B7117CA}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{32F9DB7A-FB52-43E0-B45E-67B9CD6C84A8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{32F9DB7A-FB52-43E0-B45E-67B9CD6C84A8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{32F9DB7A-FB52-43E0-B45E-67B9CD6C84A8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{32F9DB7A-FB52-43E0-B45E-67B9CD6C84A8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{15A9B9F4-88DA-4359-A627-7E8CB37AC878}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{15A9B9F4-88DA-4359-A627-7E8CB37AC878}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{15A9B9F4-88DA-4359-A627-7E8CB37AC878}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{15A9B9F4-88DA-4359-A627-7E8CB37AC878}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5B50EB83-9CB8-45C0-BC5E-56332B7117CA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5B50EB83-9CB8-45C0-BC5E-56332B7117CA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5B50EB83-9CB8-45C0-BC5E-56332B7117CA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5B50EB83-9CB8-45C0-BC5E-56332B7117CA}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
