@@ -1,4 +1,6 @@
-﻿using System;
+﻿using SethWebster.OpenLogging.Client;
+using SethWebster.OpenLogging.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,41 +10,111 @@ namespace SethWebster.OpenLogging.Console
 {
     class Program
     {
+        static async Task<LogMessage> dostuff()
+        {
+            // Production URL
+            string uri = "http://openlogger.azurewebsites.net/api";
+            // "openlogger" hostname used below is so that we can debug with Fidder; this requires
+            // updates to the CustomRules of Fiddler.
+            // See http://codebetter.com/howarddierking/2011/05/09/getting-fiddler-and-the-net-framework-to-play-better-together-2/ for usage
+            // Uncomment this line when using Fiddler (and set up as above)
+            // uri = "http://openlogger/api/";
+            // Uncomment this line when not using Fiddler
+            // uri = "http://localhost:6=757/api/";
+            OpenLoggingClient cl = new Client.OpenLoggingClient(new Uri(uri));
+            Writeline("Using " + uri + " as endpoint for operations");
+            Writeline("Creating Client...");
+            var clientCreationResult = await cl.CreateClient(new SethWebster.OpenLogging.Models.Client() { ClientName = "Southwest" });
+            Writeline("Created Client #" + clientCreationResult.ClientId);
+            Writeline("Creating Log Message Entry ...");
+
+            cl = new OpenLoggingClient(clientCreationResult.CurrentApiKey, new Uri(uri));
+
+            var logRes = await cl.NewLogEntry(new LogMessage()
+            {
+                Title = "New Log MEssage" + DateTime.Now,
+                Category = "ERROR",
+                Body = "Body of " + DateTime.Now,
+                Message = "This is the dang message"
+            });
+            return logRes;
+            //Writeline("Press ENTER to start.");
+            //System.Console.ReadLine();
+            //System.Console.WriteLine("Server is located at " + uri);
+            //OpenLogging.Client.OpenLoggingClient cl = new Client.OpenLoggingClient(new Uri(uri));
+            //cl.CreateClient(new SethWebster.OpenLogging.Models.Client()
+            //{
+            //    ClientName = "southwest"
+            //}).ContinueWith(clientResult =>
+            //{
+            //    if (!clientResult.IsFaulted)
+            //    {
+            //        System.Console.WriteLine("Client created.");
+            //        Writeline("Press ENTER to create log entry"); System.Console.ReadLine();
+            //        var newcl = new Client.OpenLoggingClient(clientResult.Result.CurrentApiKey, new Uri(uri));
+            //        System.Console.WriteLine("Creating new log entry");
+            //        newcl.NewLogEntry(new SethWebster.OpenLogging.Models.LogMessage
+            //        {
+            //            Category = "Error",
+            //            Message = "Message 2",
+            //            Title = "Big error"
+            //        }).ContinueWith(logEntryResult =>
+            //        {
+            //            if (!logEntryResult.IsFaulted)
+            //            {
+            //                System.Console.WriteLine("Created");
+            //                System.Console.WriteLine(logEntryResult.Result.LogMessageId);
+            //                Writeline("Press ENTER to DELETE client"); System.Console.ReadLine();
+            //                System.Console.WriteLine("Deleting client");
+            //                newcl.DeleteClient(clientResult.Result).ContinueWith(deleteClientResult =>
+            //                {
+            //                    if (!deleteClientResult.IsFaulted)
+            //                    {
+            //                        System.Console.WriteLine("Client deleted " + deleteClientResult);
+            //                    }
+            //                    else
+            //                    {
+            //                        Writeline("Error: " + clientResult.Exception);
+            //                    }
+            //                });
+            //            }
+            //            else
+            //            {
+            //                Writeline("Error: " + logEntryResult.Exception);
+            //            }
+            //        });
+            //    }
+            //    else
+            //    {
+            //        Writeline("Error: " + clientResult.Exception);
+            //    }
+            //});
+
+
+            //System.Console.ReadLine();
+
+        }
         static void Main(string[] args)
         {
-            while (true)
+            var item = dostuff();
+
+            try
             {
-                string uri = "https://openlogging.azurewebsites.net/api";
-                //uri = "http://localhost:60757/api/";
-                System.Console.WriteLine("Creating client to " + uri);
-                OpenLogging.Client.OpenLoggingClient cl = new Client.OpenLoggingClient(new Uri(uri));
-                cl.CreateClient(new SethWebster.OpenLogging.Models.Client()
-                {
-                    ClientName = "southwest"
-                }).ContinueWith(r =>
-                {
-                    System.Console.WriteLine("Client created.");
-                    var newcl = new Client.OpenLoggingClient(r.Result.CurrentApiKey, new Uri(uri));
-                    System.Console.WriteLine("Creating new log entry");
-                    newcl.NewLogEntry(new SethWebster.OpenLogging.Models.LogMessage
-                    {
-                        Category = "Error",
-                        Message = "Message 2",
-                        Title = "Big error"
-                    }).ContinueWith(rr =>
-                    {
-                        System.Console.WriteLine("Created");
-                        System.Console.WriteLine(rr.Result.LogMessageId);
-                        System.Console.WriteLine("Deleteing client");
-                        newcl.DeleteClient(r.Result).ContinueWith(rrr => {
-                            System.Console.WriteLine("Client deleted "+rrr);
-                        });
-                    });
-                });
-
-
-                System.Console.ReadLine();
+                Task.WaitAll(item);
             }
+            catch(Exception e)
+            {
+                Writeline("ERROR: " + e.GetBaseException());
+            }
+            Writeline(item.Result.LogMessageId);
+            Readline();
+        }
+
+        static string Readline() { return System.Console.ReadLine(); }
+
+        static void Writeline(object content)
+        {
+            System.Console.WriteLine(content);
         }
     }
 }

@@ -1,44 +1,105 @@
-﻿using SethWebster.OpenLogging.Models;
-using System;
+﻿using System;
 using System.Collections.Generic;
+using System.Data;
+using System.Data.Entity;
+using System.Data.Entity.Infrastructure;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 using System.Web.Http;
 using System.Web.Http.Description;
+using SethWebster.OpenLogging.Models;
 
 namespace SethWebster.OpenLogging.api
 {
     public class LogController : ApiController
     {
-        DBContext data = new DBContext();
-        // GET api/<controller>
-        public IEnumerable<string> Get()
+        private DBContext data = new DBContext();
+
+        // GET api/Log
+        public IQueryable<LogMessage> GetLogMessages()
         {
-            return new string[] { "value1", "value2" };
+            return data.LogMessages;
         }
 
-        // GET api/<controller>/5
-        public string Get(int id)
-        {
-            return "value";
-        }
-
-        // POST api/<controller>
+        // GET api/Log/5
         [ResponseType(typeof(LogMessage))]
-        public async Task<IHttpActionResult> Post(LogMessage message)
+        public async Task<IHttpActionResult> GetLogMessage(int id)
         {
-            Client cli = GetClientFromHeaders();
-            cli.LogMessages.Add(message);
+            LogMessage logmessage = await data.LogMessages.FindAsync(id);
+            if (logmessage == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(logmessage);
+        }
+
+        // PUT api/Log/5
+        public async Task<IHttpActionResult> PutLogMessage(int id, LogMessage logmessage)
+        {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
-            await data.SaveChangesAsync();
-            return CreatedAtRoute("DefaultApi", new { id = message.LogMessageId }, message);
+
+            if (id != logmessage.LogMessageId)
+            {
+                return BadRequest();
+            }
+
+            data.Entry(logmessage).State = EntityState.Modified;
+
+            try
+            {
+                await data.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!LogMessageExists(id))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+
+            return StatusCode(HttpStatusCode.NoContent);
         }
 
+        // POST api/Log
+        [ResponseType(typeof(LogMessage))]
+        public async Task<IHttpActionResult> PostLogMessage(LogMessage logmessage)
+        {
+            var client = GetClientFromHeaders();
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            client.LogMessages.Add(logmessage);
+            await data.SaveChangesAsync();
+            return CreatedAtRoute("DefaultApi", new { id = logmessage.LogMessageId }, logmessage);
+        }
+
+        // DELETE api/Log/5
+        [ResponseType(typeof(LogMessage))]
+        public async Task<IHttpActionResult> DeleteLogMessage(int id)
+        {
+            LogMessage logmessage = await data.LogMessages.FindAsync(id);
+            if (logmessage == null)
+            {
+                return NotFound();
+            }
+
+            data.LogMessages.Remove(logmessage);
+            await data.SaveChangesAsync();
+
+            return Ok(logmessage);
+        }
         private Client GetClientFromHeaders()
         {
             KeyValuePair<string, IEnumerable<string>> header;
@@ -71,15 +132,18 @@ namespace SethWebster.OpenLogging.api
             }
 
         }
-
-        // PUT api/<controller>/5
-        public void Put(int id, [FromBody]string value)
+        protected override void Dispose(bool disposing)
         {
+            if (disposing)
+            {
+                data.Dispose();
+            }
+            base.Dispose(disposing);
         }
 
-        // DELETE api/<controller>/5
-        public void Delete(int id)
+        private bool LogMessageExists(int id)
         {
+            return data.LogMessages.Count(e => e.LogMessageId == id) > 0;
         }
     }
 }

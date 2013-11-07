@@ -71,7 +71,7 @@ namespace SethWebster.OpenLogging.Client
             {
                 cli.DefaultRequestHeaders.Add("x-auth", _clientApiKey.ToString());
             }
-            var res = await cli.DeleteAsync(actionUrl + "?id=" + itemId);
+            var res = await cli.DeleteAsync(actionUrl + "/" + itemId);
             var strRes = await res.Content.ReadAsStringAsync();
             var message2 = JsonConvert.DeserializeObject<T>(strRes);
             return message2;
