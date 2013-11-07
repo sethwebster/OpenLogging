@@ -75,12 +75,14 @@ namespace SethWebster.OpenLogging.api
         public async Task<IHttpActionResult> PostLogMessage(LogMessage logmessage)
         {
             var client = GetClientFromHeaders();
+            client.LogMessages.Add(logmessage);
+            logmessage.Client = client;
+            ModelState.Remove("logmessage.Client");
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            client.LogMessages.Add(logmessage);
             await data.SaveChangesAsync();
             return CreatedAtRoute("DefaultApi", new { id = logmessage.LogMessageId }, logmessage);
         }

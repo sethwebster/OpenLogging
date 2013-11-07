@@ -187,6 +187,10 @@
     <Compile Include="Migrations\201311052324261_Added-Client-FK.Designer.cs">
       <DependentUpon>201311052324261_Added-Client-FK.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201311070553057_added-required-fields.cs" />
+    <Compile Include="Migrations\201311070553057_added-required-fields.Designer.cs">
+      <DependentUpon>201311070553057_added-required-fields.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\Client.cs" />
@@ -259,6 +263,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201311052324261_Added-Client-FK.resx">
       <DependentUpon>201311052324261_Added-Client-FK.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201311070553057_added-required-fields.resx">
+      <DependentUpon>201311070553057_added-required-fields.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

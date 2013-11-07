@@ -20,7 +20,7 @@ namespace SethWebster.OpenLogging.Console
             // Uncomment this line when using Fiddler (and set up as above)
             // uri = "http://openlogger/api/";
             // Uncomment this line when not using Fiddler
-            // uri = "http://localhost:6=757/api/";
+            uri = "http://localhost:60757/api/";
             OpenLoggingClient cl = new Client.OpenLoggingClient(new Uri(uri));
             var clientCreationResult = await CreateClient(uri, cl);
             var logCreationResult = await CreateLogEntry(uri, clientCreationResult);
