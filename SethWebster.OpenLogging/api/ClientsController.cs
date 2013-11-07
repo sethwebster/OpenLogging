@@ -36,6 +36,18 @@ namespace SethWebster.OpenLogging.api
             return Ok(client);
         }
 
+        [ResponseType(typeof(Client))]
+        public async Task<IHttpActionResult> GetClient(string name)
+        {
+            Client client = await db.Clients.FirstOrDefaultAsync(c => c.ClientName.Equals(name));
+            if (client == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(client);
+        }
+
         // PUT api/Clients/5
         public async Task<IHttpActionResult> PutClient(int id, Client client)
         {

@@ -13,6 +13,7 @@ namespace SethWebster.OpenLogging.Client
     {
         Guid _clientApiKey = Guid.Empty;
         Uri _endpoint = new Uri("https://openlogger.azurewebsites.net/api");
+        #region CTOR
         public OpenLoggingClient()
         {
 
@@ -25,19 +26,18 @@ namespace SethWebster.OpenLogging.Client
         {
             _clientApiKey = apiKey;
         }
-
         public OpenLoggingClient(Guid apiKey, Uri endpoint)
         {
             _clientApiKey = apiKey;
             _endpoint = endpoint;
         }
+        #endregion
         public async Task<LogMessage> NewLogEntry(LogMessage message)
         {
             ValidateApiKey();
             var res = await CreateItem<LogMessage>("/api/log", message);
             return res;
         }
-
         public async Task<SethWebster.OpenLogging.Models.Client> CreateClient(SethWebster.OpenLogging.Models.Client client)
         {
             var res = await CreateItem<SethWebster.OpenLogging.Models.Client>("/api/clients", client);
@@ -48,7 +48,16 @@ namespace SethWebster.OpenLogging.Client
             var res = await DeleteItem<SethWebster.OpenLogging.Models.Client>("/api/clients", client.ClientId);
             return res;
         }
+        public async Task<SethWebster.OpenLogging.Models.Client> GetClient(string name)
+        {
+            HttpClient cli = new HttpClient();
+            cli.BaseAddress = _endpoint;
 
+            var res = await cli.GetAsync("/api/clients?name=" + name);
+            var strRes = await res.Content.ReadAsStringAsync();
+            var message2 = JsonConvert.DeserializeObject<Models.Client>(strRes);
+            return message2;
+        }
         public async Task<IEnumerable<Models.Client>> ListClients()
         {
             HttpClient cli = new HttpClient();

@@ -23,6 +23,8 @@ namespace SethWebster.OpenLogging.Console
             uri = "http://localhost:60757/api/";
             OpenLoggingClient cl = new Client.OpenLoggingClient(new Uri(uri));
             var clientCreationResult = await CreateClient(uri, cl);
+            var clientGetResult = await cl.GetClient("Southwest");
+            Writeline(clientGetResult.ClientName + " " + clientGetResult.CurrentApiKey + " fetched OK");
             var logCreationResult = await CreateLogEntry(uri, clientCreationResult);
             var deleteClientResult = await DeleteClient(clientCreationResult, cl);
             var listClientsResult = await ListClients(cl);
@@ -88,7 +90,7 @@ namespace SethWebster.OpenLogging.Console
         {
             var res = await cl.ListClients();
             Writeline(res.Count() + " clients");
-            foreach(var c in res)
+            foreach (var c in res)
             {
                 Writeline(c.ClientId + " " + c.ClientName + " " + c.CurrentApiKey);
                 DeleteClient(c, cl);
@@ -134,7 +136,7 @@ namespace SethWebster.OpenLogging.Console
             {
                 Task.WaitAll(item);
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 Writeline("ERROR: " + e.GetBaseException());
             }
