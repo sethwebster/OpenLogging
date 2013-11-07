@@ -25,6 +25,7 @@ namespace SethWebster.OpenLogging.Console
             var clientCreationResult = await CreateClient(uri, cl);
             var logCreationResult = await CreateLogEntry(uri, clientCreationResult);
             var deleteClientResult = await DeleteClient(clientCreationResult, cl);
+            var listClientsResult = await ListClients(cl);
             return logCreationResult;
             //Writeline("Press ENTER to start.");
             //System.Console.ReadLine();
@@ -81,6 +82,18 @@ namespace SethWebster.OpenLogging.Console
 
             //System.Console.ReadLine();
 
+        }
+
+        private static async Task<object> ListClients(OpenLoggingClient cl)
+        {
+            var res = await cl.ListClients();
+            Writeline(res.Count() + " clients");
+            foreach(var c in res)
+            {
+                Writeline(c.ClientId + " " + c.ClientName + " " + c.CurrentApiKey);
+                DeleteClient(c, cl);
+            }
+            return res;
         }
 
         private static async Task<Models.Client> DeleteClient(Models.Client client, OpenLoggingClient cl)

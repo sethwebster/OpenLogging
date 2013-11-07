@@ -12,7 +12,7 @@ namespace SethWebster.OpenLogging.Client
     public class OpenLoggingClient
     {
         Guid _clientApiKey = Guid.Empty;
-        Uri _endpoint = new Uri("https://openlogging.azurewebsites.net/api");
+        Uri _endpoint = new Uri("https://openlogger.azurewebsites.net/api");
         public OpenLoggingClient()
         {
 
@@ -47,6 +47,20 @@ namespace SethWebster.OpenLogging.Client
         {
             var res = await DeleteItem<SethWebster.OpenLogging.Models.Client>("/api/clients", client.ClientId);
             return res;
+        }
+
+        public async Task<IEnumerable<Models.Client>> ListClients()
+        {
+            HttpClient cli = new HttpClient();
+            cli.BaseAddress = _endpoint;
+            if (_clientApiKey != Guid.Empty)
+            {
+                cli.DefaultRequestHeaders.Add("x-auth", _clientApiKey.ToString());
+            }
+            var res = await cli.GetAsync("/api/clients");
+            var strRes = await res.Content.ReadAsStringAsync();
+            var message2 = JsonConvert.DeserializeObject<IEnumerable<Models.Client>>(strRes);
+            return message2;
         }
 
         private async Task<T> CreateItem<T>(string actionUrl, T item)
