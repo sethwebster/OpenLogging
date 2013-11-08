@@ -2,17 +2,20 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
     <metadata>
         <id>SethWebster.OpenLogging.Client</id>
-        <version>0.1.0.2</version>
+        <version>0.1.0.3</version>
         <title>SethWebster.OpenLogging.Client</title>
         <authors>Seth Webster</authors>
         <owners>swebster</owners>
         <requireLicenseAcceptance>false</requireLicenseAcceptance>
         <description>Description</description>
+        <releaseNotes>Updated client endpoint</releaseNotes>
         <copyright>Copyright ©  2013</copyright>
         <dependencies>
             <dependency id="Newtonsoft.Json" version="5.0.8" />
         </dependencies>
-      <releaseNotes>Updated client endpoint</releaseNotes>
-
     </metadata>
+    <files>
+        <file src="bin\Release\SethWebster.OpenLogging.Client.dll" target="lib\net45\SethWebster.OpenLogging.Client.dll" />
+        <file src="bin\Release\SethWebster.OpenLogging.dll" target="lib\net45\SethWebster.OpenLogging.dll" />
+    </files>
 </package>
