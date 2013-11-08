@@ -33,7 +33,7 @@ namespace SethWebster.OpenLogging.Client
         }
         #endregion
 
-        public Guid ApiKey { get; protected set; }
+        public Guid ApiKey { get { return _clientApiKey; } protected set { _clientApiKey = value; } }
         public async Task<LogMessage> NewLogEntry(LogMessage message)
         {
             ValidateApiKey();
