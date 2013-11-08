@@ -26,7 +26,7 @@ namespace SethWebster.OpenLogging.Console
             var clientGetResult = await cl.GetClient("Southwest");
             Writeline(clientGetResult.ClientName + " " + clientGetResult.CurrentApiKey + " fetched OK");
             var logCreationResult = await CreateLogEntry(uri, clientCreationResult);
-            var deleteClientResult = await DeleteClient(clientCreationResult, cl);
+           // var deleteClientResult = await DeleteClient(clientCreationResult, cl);
             var listClientsResult = await ListClients(cl);
             return logCreationResult;
             //Writeline("Press ENTER to start.");
@@ -93,7 +93,7 @@ namespace SethWebster.OpenLogging.Console
             foreach (var c in res)
             {
                 Writeline(c.ClientId + " " + c.ClientName + " " + c.CurrentApiKey);
-                DeleteClient(c, cl);
+               
             }
             return res;
         }
@@ -115,7 +115,8 @@ namespace SethWebster.OpenLogging.Console
                 Title = "New Log MEssage" + DateTime.Now,
                 Category = "ERROR",
                 Body = "Body of " + DateTime.Now,
-                Message = "This is the dang message"
+                Message = "This is the dang message",
+                DateOfExpiration = DateTimeOffset.Now.AddMinutes(1)
             });
             return logRes;
         }
