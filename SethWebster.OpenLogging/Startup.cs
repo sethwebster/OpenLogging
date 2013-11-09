@@ -9,6 +9,7 @@ namespace SethWebster.OpenLogging
         public void Configuration(IAppBuilder app)
         {
             ConfigureAuth(app);
+            ConfigureWebApi(app);
         }
     }
 }

@@ -18,9 +18,9 @@ namespace SethWebster.OpenLogging.Console
             // updates to the CustomRules of Fiddler.
             // See http://codebetter.com/howarddierking/2011/05/09/getting-fiddler-and-the-net-framework-to-play-better-together-2/ for usage
             // Uncomment this line when using Fiddler (and set up as above)
-            // uri = "http://openlogger/api/";
+            uri = "http://openlogger/api/";
             // Uncomment this line when not using Fiddler
-            uri = "http://localhost:60757/api/";
+            // uri = "http://localhost:60757/api/";
             OpenLoggingClient cl = new Client.OpenLoggingClient(new Uri(uri));
             var clientCreationResult = await CreateClient(uri, cl);
             var clientGetResult = await cl.GetClient("Southwest");
