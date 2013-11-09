@@ -31,7 +31,7 @@ namespace SethWebster.OpenLogging.api
                     return this.ResponseMessage(new HttpResponseMessage(HttpStatusCode.Unauthorized));
                 }
 
-                if (user.CurrentApiKey!=model.Apikey)
+                if (model.Apikey!= default(Guid) && user.CurrentApiKey!=model.Apikey)
                 {
                     return BadRequest("Api Key Invalid");
                 }

@@ -13,6 +13,8 @@ namespace SethWebster.OpenLogging.Client
     {
         Guid _clientApiKey = Guid.Empty;
         Uri _endpoint = new Uri("https://openlogger.azurewebsites.net/api");
+        private AuthorizationTicket _ticket;
+
         #region CTOR
         public OpenLoggingClient()
         {
@@ -33,10 +35,14 @@ namespace SethWebster.OpenLogging.Client
         }
         #endregion
 
-        public Guid ApiKey { get { return _clientApiKey; } protected set { _clientApiKey = value; } }
+        public Guid ApiKey
+        {
+            get { return _clientApiKey; }
+            protected set { _clientApiKey = value; }
+        }
         public async Task<LogMessage> NewLogEntry(LogMessage message)
         {
-            ValidateApiKey();
+            EnsureAuthTicket();
             var res = await CreateItem<LogMessage>("/api/log", message);
             return res;
         }
@@ -101,7 +107,11 @@ namespace SethWebster.OpenLogging.Client
             var message2 = JsonConvert.DeserializeObject<T>(strRes);
             return message2;
         }
+        private void EnsureAuthTicket()
+        {
+            ValidateApiKey();
 
+        }
         private void ValidateApiKey()
         {
             if (_clientApiKey == Guid.Empty)

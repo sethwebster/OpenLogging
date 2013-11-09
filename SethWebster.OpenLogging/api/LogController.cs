@@ -17,6 +17,7 @@ namespace SethWebster.OpenLogging.api
     {
         private DBContext data = new DBContext();
 
+        [Authorize]
         // GET api/Log
         public IQueryable<LogMessage> GetLogMessages()
         {
@@ -25,6 +26,7 @@ namespace SethWebster.OpenLogging.api
 
         // GET api/Log/5
         [ResponseType(typeof(LogMessage))]
+        [Authorize]
         public async Task<IHttpActionResult> GetLogMessage(int id)
         {
             LogMessage logmessage = await data.LogMessages.FindAsync(id);
@@ -37,6 +39,7 @@ namespace SethWebster.OpenLogging.api
         }
 
         // PUT api/Log/5
+        [Authorize]
         public async Task<IHttpActionResult> PutLogMessage(int id, LogMessage logmessage)
         {
             if (!ModelState.IsValid)
@@ -72,6 +75,7 @@ namespace SethWebster.OpenLogging.api
 
         // POST api/Log
         [ResponseType(typeof(LogMessage))]
+        [Authorize]
         public async Task<IHttpActionResult> PostLogMessage(LogMessage logmessage)
         {
             var client = GetClientFromHeaders();
@@ -88,6 +92,7 @@ namespace SethWebster.OpenLogging.api
         }
 
         // DELETE api/Log/5
+        [Authorize]
         [ResponseType(typeof(LogMessage))]
         public async Task<IHttpActionResult> DeleteLogMessage(int id)
         {
@@ -104,33 +109,13 @@ namespace SethWebster.OpenLogging.api
         }
         private Client GetClientFromHeaders()
         {
-            KeyValuePair<string, IEnumerable<string>> header;
-            Guid clientValue = Guid.Empty;
             try
             {
-                header = Request.Headers.First(h => h.Key.Equals("x-auth"));
-
+                return data.Clients.First(c => c.ClientName == User.Identity.Name);
             }
             catch (InvalidOperationException iox)
             {
-                throw new InvalidOperationException("Authorization Header Not Found", iox);
-            }
-            try
-            {
-                clientValue = Guid.Parse(header.Value.First());
-            }
-            catch
-            {
-                throw new InvalidOperationException("API Key is not properly formatted");
-            }
-
-            try
-            {
-                return data.Clients.First(c => c.CurrentApiKey.Equals(clientValue));
-            }
-            catch (InvalidOperationException iox)
-            {
-                throw new InvalidOperationException("Client Header Value is not valid", iox);
+                throw new InvalidOperationException("Authentication Ticket Not Valid", iox);
             }
 
         }
