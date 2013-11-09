@@ -15,30 +15,67 @@ namespace SethWebster.OpenLogging.api
     public class AuthController : ApiController
     {
         DBContext _data = new DBContext();
-       [HttpPost]
-        public async Task<IHttpActionResult> Token(TokenLoginModel model)
+        [HttpPost]
+        public IHttpActionResult Token(TokenLoginModel model)
         {
-            var user = _data.Clients.FirstOrDefault(c => c.ClientName == model.UserName && c.Password == model.Password);
-            if (user == null)
+            if (model==null)
             {
-                return this.ResponseMessage(new HttpResponseMessage(HttpStatusCode.Unauthorized));
+                return BadRequest();
+            }
+            if (ModelState.IsValid)
+            {
+                Client user = TryFetchUser(model);
+                
+                if (user == null)
+                {
+                    return this.ResponseMessage(new HttpResponseMessage(HttpStatusCode.Unauthorized));
+                }
+
+                if (user.CurrentApiKey!=model.Apikey)
+                {
+                    return BadRequest("Api Key Invalid");
+                }
+
+                return this.ResponseMessage(new HttpResponseMessage(HttpStatusCode.OK)
+                {
+                    Content = GetTicket(user)
+                });
+            }
+            else
+            {
+                return BadRequest(ModelState);
             }
 
+        }
+
+        private Client TryFetchUser(TokenLoginModel model)
+        {
+            Client user = null;
+            if (!string.IsNullOrEmpty(model.UserName) && !string.IsNullOrEmpty(model.Password))
+            {
+                user = _data.Clients.FirstOrDefault(c => c.ClientName == model.UserName && c.Password == model.Password);
+            }
+            if (model.Apikey != (default(Guid)) && user == null)
+            {
+                user = _data.Clients.FirstOrDefault(c => c.CurrentApiKey == model.Apikey);
+            }
+            return user;
+        }
+
+        public ObjectContent<object> GetTicket(Client client)
+        {
             var identity = new ClaimsIdentity(Startup.OAuthBearerOptions.AuthenticationType);
-            identity.AddClaim(new Claim(ClaimTypes.Name, model.UserName));
+            identity.AddClaim(new Claim(ClaimTypes.Name, client.ClientName));
             AuthenticationTicket ticket = new AuthenticationTicket(identity, new AuthenticationProperties());
             var currentUtc = new SystemClock().UtcNow;
             ticket.Properties.IssuedUtc = currentUtc;
             ticket.Properties.ExpiresUtc = currentUtc.Add(TimeSpan.FromMinutes(30));
-            return this.ResponseMessage(new HttpResponseMessage(HttpStatusCode.OK)
+            return new ObjectContent<object>(new
             {
-                Content = new ObjectContent<object>(new
-                {
-                    UserName = model.UserName,
-                    AccessToken = Startup.OAuthBearerOptions.AccessTokenFormat.Protect(ticket)
-                }, Configuration.Formatters.JsonFormatter)
-            });
-
+                UserName = client.ClientName,
+                AccessToken = Startup.OAuthBearerOptions.AccessTokenFormat.Protect(ticket),
+                Expires = ticket.Properties.ExpiresUtc
+            }, Configuration.Formatters.JsonFormatter);
         }
     }
 }
