@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations;
@@ -20,7 +21,9 @@ namespace SethWebster.OpenLogging.Models
         public string ClientName { get; set; }
         public Guid CurrentApiKey { get; set; }
         public ICollection<LogMessage> LogMessages { get; set; }
-
+        [Required]
+        [JsonIgnore]
+        public string Password { get; set; }
         public DateTimeOffset DateCreated { get; set; }
     }
 }
