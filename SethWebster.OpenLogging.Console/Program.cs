@@ -21,12 +21,13 @@ namespace SethWebster.OpenLogging.Console
             uri = "http://openlogger/api/";
             // Uncomment this line when not using Fiddler
             // uri = "http://localhost:60757/api/";
+            Writeline("Using " + uri + " as endpoint for operations");
             OpenLoggingClient cl = new Client.OpenLoggingClient(new Uri(uri));
             var clientCreationResult = await CreateClient(uri, cl);
+            cl = new OpenLoggingClient(clientCreationResult.CurrentApiKey, new Uri(uri));
             var clientGetResult = await cl.GetClient("Southwest");
             Writeline(clientGetResult.ClientName + " " + clientGetResult.CurrentApiKey + " fetched OK");
-            var logCreationResult = await CreateLogEntry(uri, clientCreationResult);
-            // var deleteClientResult = await DeleteClient(clientCreationResult, cl);
+            var logCreationResult = await CreateLogEntry(uri, cl);
             var listClientsResult = await ListClients(cl);
             return logCreationResult;
 
@@ -52,11 +53,10 @@ namespace SethWebster.OpenLogging.Console
             return res;
         }
 
-        private static async Task<LogMessage> CreateLogEntry(string uri, Models.Client clientCreationResult)
+        private static async Task<LogMessage> CreateLogEntry(string uri, OpenLoggingClient cl2)
         {
             Writeline("Creating Log Message Entry ...");
-            var cl2 = new OpenLoggingClient(clientCreationResult.CurrentApiKey, new Uri(uri));
-
+          
             var logRes = await cl2.NewLogEntry(new LogMessage()
             {
                 Title = "New Log MEssage" + DateTime.Now,
@@ -70,7 +70,6 @@ namespace SethWebster.OpenLogging.Console
 
         private static async Task<Models.Client> CreateClient(string uri, OpenLoggingClient cl)
         {
-            Writeline("Using " + uri + " as endpoint for operations");
             Writeline("Creating Client...");
             var clientCreationResult = await cl.CreateClient(new SethWebster.OpenLogging.Models.Client() { ClientName = "Southwest", Password = "testpassword" });
             Writeline("Created Client #" + clientCreationResult.ClientId);
@@ -78,18 +77,22 @@ namespace SethWebster.OpenLogging.Console
         }
         static void Main(string[] args)
         {
-            var item = dostuff();
+            while (true)
+            {
+                var item = dostuff();
 
-            try
-            {
-                Task.WaitAll(item);
+                try
+                {
+                    Task.WaitAll(item);
+                }
+                catch (Exception e)
+                {
+                    Writeline("ERROR: " + e.GetBaseException());
+                }
+                Writeline(item.Result.LogMessageId);
+                Writeline("Press ENTER to repeat");
+                Readline();
             }
-            catch (Exception e)
-            {
-                Writeline("ERROR: " + e.GetBaseException());
-            }
-            Writeline(item.Result.LogMessageId);
-            Readline();
         }
 
         static string Readline() { return System.Console.ReadLine(); }
