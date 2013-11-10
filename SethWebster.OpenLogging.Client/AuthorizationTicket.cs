@@ -9,7 +9,7 @@ namespace SethWebster.OpenLogging.Client
     public class AuthorizationTicket
     {
         public string Username { get; set; }
-        public string TicketData { get; set; }
+        public string AccessToken { get; set; }
         public DateTimeOffset Expires { get; set; }
         public bool IsExpired
         {

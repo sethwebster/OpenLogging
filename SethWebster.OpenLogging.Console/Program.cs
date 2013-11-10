@@ -26,63 +26,10 @@ namespace SethWebster.OpenLogging.Console
             var clientGetResult = await cl.GetClient("Southwest");
             Writeline(clientGetResult.ClientName + " " + clientGetResult.CurrentApiKey + " fetched OK");
             var logCreationResult = await CreateLogEntry(uri, clientCreationResult);
-           // var deleteClientResult = await DeleteClient(clientCreationResult, cl);
+            // var deleteClientResult = await DeleteClient(clientCreationResult, cl);
             var listClientsResult = await ListClients(cl);
             return logCreationResult;
-            //Writeline("Press ENTER to start.");
-            //System.Console.ReadLine();
-            //System.Console.WriteLine("Server is located at " + uri);
-            //OpenLogging.Client.OpenLoggingClient cl = new Client.OpenLoggingClient(new Uri(uri));
-            //cl.CreateClient(new SethWebster.OpenLogging.Models.Client()
-            //{
-            //    ClientName = "southwest"
-            //}).ContinueWith(clientResult =>
-            //{
-            //    if (!clientResult.IsFaulted)
-            //    {
-            //        System.Console.WriteLine("Client created.");
-            //        Writeline("Press ENTER to create log entry"); System.Console.ReadLine();
-            //        var newcl = new Client.OpenLoggingClient(clientResult.Result.CurrentApiKey, new Uri(uri));
-            //        System.Console.WriteLine("Creating new log entry");
-            //        newcl.NewLogEntry(new SethWebster.OpenLogging.Models.LogMessage
-            //        {
-            //            Category = "Error",
-            //            Message = "Message 2",
-            //            Title = "Big error"
-            //        }).ContinueWith(logEntryResult =>
-            //        {
-            //            if (!logEntryResult.IsFaulted)
-            //            {
-            //                System.Console.WriteLine("Created");
-            //                System.Console.WriteLine(logEntryResult.Result.LogMessageId);
-            //                Writeline("Press ENTER to DELETE client"); System.Console.ReadLine();
-            //                System.Console.WriteLine("Deleting client");
-            //                newcl.DeleteClient(clientResult.Result).ContinueWith(deleteClientResult =>
-            //                {
-            //                    if (!deleteClientResult.IsFaulted)
-            //                    {
-            //                        System.Console.WriteLine("Client deleted " + deleteClientResult);
-            //                    }
-            //                    else
-            //                    {
-            //                        Writeline("Error: " + clientResult.Exception);
-            //                    }
-            //                });
-            //            }
-            //            else
-            //            {
-            //                Writeline("Error: " + logEntryResult.Exception);
-            //            }
-            //        });
-            //    }
-            //    else
-            //    {
-            //        Writeline("Error: " + clientResult.Exception);
-            //    }
-            //});
 
-
-            //System.Console.ReadLine();
 
         }
 
@@ -93,7 +40,7 @@ namespace SethWebster.OpenLogging.Console
             foreach (var c in res)
             {
                 Writeline(c.ClientId + " " + c.ClientName + " " + c.CurrentApiKey);
-               
+
             }
             return res;
         }
@@ -125,7 +72,7 @@ namespace SethWebster.OpenLogging.Console
         {
             Writeline("Using " + uri + " as endpoint for operations");
             Writeline("Creating Client...");
-            var clientCreationResult = await cl.CreateClient(new SethWebster.OpenLogging.Models.Client() { ClientName = "Southwest" });
+            var clientCreationResult = await cl.CreateClient(new SethWebster.OpenLogging.Models.Client() { ClientName = "Southwest", Password = "testpassword" });
             Writeline("Created Client #" + clientCreationResult.ClientId);
             return clientCreationResult;
         }

@@ -84,12 +84,17 @@ namespace SethWebster.OpenLogging.api
 
         // POST api/Clients
         [ResponseType(typeof(Client))]
-        public async Task<IHttpActionResult> PostClient(Client client)
+        public async Task<IHttpActionResult> PostClient(ClientCreationModel clientModel)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
+            Client client = new Client()
+            {
+                ClientName = clientModel.ClientName,
+                Password = clientModel.Password
+            };
 
             db.Clients.Add(client);
             await db.SaveChangesAsync();

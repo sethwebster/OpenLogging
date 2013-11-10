@@ -43,13 +43,13 @@ namespace SethWebster.OpenLogging.Client
         public async Task<LogMessage> NewLogEntry(LogMessage message)
         {
             EnsureAuthTicket();
-            var res = await CreateItem<LogMessage>("/api/log", message);
+            var res = await CreateItem<LogMessage, LogMessage>("/api/log", message);
             return res;
         }
         public async Task<SethWebster.OpenLogging.Models.Client> CreateClient(SethWebster.OpenLogging.Models.Client client)
         {
-            var res = await CreateItem<SethWebster.OpenLogging.Models.Client>("/api/clients", client);
-            return res;
+            var res = await CreateItem<object, SethWebster.OpenLogging.Models.Client>("/api/clients", new { client.ClientName, client.Password });
+            return (SethWebster.OpenLogging.Models.Client)res;
         }
         public async Task<SethWebster.OpenLogging.Models.Client> DeleteClient(SethWebster.OpenLogging.Models.Client client)
         {
@@ -80,7 +80,7 @@ namespace SethWebster.OpenLogging.Client
             return message2;
         }
 
-        private async Task<T> CreateItem<T>(string actionUrl, T item)
+        private async Task<TReturn> CreateItem<TInput, TReturn>(string actionUrl, TInput item)
         {
             HttpClient cli = new HttpClient();
             cli.BaseAddress = _endpoint;
@@ -88,9 +88,9 @@ namespace SethWebster.OpenLogging.Client
             {
                 cli.DefaultRequestHeaders.Add("x-auth", _clientApiKey.ToString());
             }
-            var res = await cli.PostAsJsonAsync<T>(new Uri(actionUrl, UriKind.Relative), item);
+            var res = await cli.PostAsJsonAsync<TInput>(new Uri(actionUrl, UriKind.Relative), item);
             var strRes = await res.Content.ReadAsStringAsync();
-            var message2 = JsonConvert.DeserializeObject<T>(strRes);
+            var message2 = JsonConvert.DeserializeObject<TReturn>(strRes);
             return message2;
         }
 
@@ -114,7 +114,6 @@ namespace SethWebster.OpenLogging.Client
             {
                 HttpClient cli = new HttpClient();
                 cli.BaseAddress = _endpoint;
-                cli.DefaultRequestHeaders.Add("x-auth", _clientApiKey.ToString());
                 var res = await cli.PostAsJsonAsync(new Uri("/api/auth/token", UriKind.Relative), new TokenLoginModel()
                 {
                     Apikey = _clientApiKey

@@ -8,9 +8,9 @@ using System.Web;
 
 namespace SethWebster.OpenLogging.Models
 {
-    public class Client
+    public class ClientCreationModel
     {
-        public Client()
+        public ClientCreationModel()
         {
             this.LogMessages = new Collection<LogMessage>();
             this.DateCreated = DateTimeOffset.Now;
@@ -22,7 +22,8 @@ namespace SethWebster.OpenLogging.Models
         public Guid CurrentApiKey { get; set; }
         public ICollection<LogMessage> LogMessages { get; set; }
         [Required]
-        [JsonIgnore]
+
+        
         public string Password
         {
 
