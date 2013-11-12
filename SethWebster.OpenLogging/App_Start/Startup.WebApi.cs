@@ -19,7 +19,9 @@ namespace SethWebster.OpenLogging
      
             // Web API configuration and services 
             // Configure Web API to use only bearer token authentication. 
-            config.SuppressDefaultHostAuthentication();
+            
+            //TODO: Determine if (commenting) this (out) is the best way to handle allowing both un/pw login & bearer
+            // config.SuppressDefaultHostAuthentication();
             config.Filters.Add(new HostAuthenticationFilter(OAuthBearerOptions.AuthenticationType));
             
             // Web API routes 
