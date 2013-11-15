@@ -18,6 +18,7 @@ namespace SethWebster.OpenLogging.Models
             this.CurrentApiKey = Guid.NewGuid();
         }
         public int ClientId { get; set; }
+        [Required]
         public User Owner  { get; set; }
 
         [Required]

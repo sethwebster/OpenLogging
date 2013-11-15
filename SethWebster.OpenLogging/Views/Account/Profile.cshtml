@@ -5,11 +5,13 @@
 
 <h2>@Model.UserName</h2>
 
-<ul>
+@Html.ActionLink("Create New Client", "CreateClient")
+<ul id="client-list">
     @foreach (var c in Model.Clients)
     {
         <li>
-            @(c.ClientName + " " + c.CurrentApiKey)
+            <div class='client-name'>@(c.ClientName) </div>
+            <div class="client-api-key">@c.CurrentApiKey)</div>
         </li>
     }
 </ul>

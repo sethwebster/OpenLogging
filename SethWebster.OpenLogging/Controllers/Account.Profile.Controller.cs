@@ -18,5 +18,26 @@ namespace SethWebster.OpenLogging.Controllers
            
             return View(user);
         }
+
+        public async Task<ActionResult> CreateClient()
+        {
+            return View(new Client());
+        }
+
+        [HttpPost]
+        public async Task<ActionResult> CreateClient(Client client)
+        {
+            var user = _data.Users.Include("Clients").First(u => u.UserName == User.Identity.Name);
+            client.Owner = user;
+            ModelState.Remove("Owner");
+            if (ModelState.IsValid)
+            {
+                user.Clients.Add(client);
+                await _data.SaveChangesAsync();
+                return RedirectToAction("Profile");
+            }
+
+            return View(client);
+        }
     }
 }

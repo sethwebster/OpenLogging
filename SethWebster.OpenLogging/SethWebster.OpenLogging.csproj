@@ -224,6 +224,10 @@
     <Compile Include="Migrations\201311151512516_added-clients-to-user.Designer.cs">
       <DependentUpon>201311151512516_added-clients-to-user.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201311151549512_added-required-to-client.cs" />
+    <Compile Include="Migrations\201311151549512_added-required-to-client.Designer.cs">
+      <DependentUpon>201311151549512_added-required-to-client.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\ClientCreationModel.cs" />
@@ -286,6 +290,7 @@
     <Content Include="Views\Shared\_LoginPartial.cshtml" />
     <Content Include="Views\LogMessages\Index.cshtml" />
     <Content Include="Views\Account\Profile.cshtml" />
+    <Content Include="Views\Account\CreateClient.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -317,6 +322,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201311151512516_added-clients-to-user.resx">
       <DependentUpon>201311151512516_added-clients-to-user.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201311151549512_added-required-to-client.resx">
+      <DependentUpon>201311151549512_added-required-to-client.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
