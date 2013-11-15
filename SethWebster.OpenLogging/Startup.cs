@@ -10,6 +10,9 @@ namespace SethWebster.OpenLogging
         {
             ConfigureAuth(app);
             ConfigureWebApi(app);
+            app.MapSignalR();
+
         }
+
     }
 }

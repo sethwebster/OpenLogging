@@ -193,9 +193,12 @@
     <Compile Include="App_Start\Startup.WebApi.cs" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="Controllers\LogMessagesController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Hubs\LoggingHub.cs" />
+    <Compile Include="Hubs\LogMessageSyndication.cs" />
     <Compile Include="Migrations\201311051812391_initial.cs" />
     <Compile Include="Migrations\201311051812391_initial.Designer.cs">
       <DependentUpon>201311051812391_initial.cs</DependentUpon>
@@ -275,9 +278,11 @@
     <Content Include="Views\Account\Manage.cshtml" />
     <Content Include="Views\Account\Register.cshtml" />
     <Content Include="Views\Shared\_LoginPartial.cshtml" />
+    <Content Include="Views\LogMessages\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
+    <Folder Include="NewFolder1\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="fonts\glyphicons-halflings-regular.woff" />
