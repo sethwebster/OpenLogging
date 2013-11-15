@@ -51,10 +51,6 @@ namespace SethWebster.OpenLogging.api
         private Client TryFetchUser(TokenLoginModel model)
         {
             Client user = null;
-            if (!string.IsNullOrEmpty(model.UserName) && !string.IsNullOrEmpty(model.Password))
-            {
-                user = _data.Clients.FirstOrDefault(c => c.ClientName == model.UserName && c.Password == model.Password);
-            }
             if (model.Apikey != (default(Guid)) && user == null)
             {
                 user = _data.Clients.FirstOrDefault(c => c.CurrentApiKey == model.Apikey);

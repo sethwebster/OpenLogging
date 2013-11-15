@@ -56,7 +56,7 @@ namespace SethWebster.OpenLogging.Console
         private static async Task<LogMessage> CreateLogEntry(string uri, OpenLoggingClient cl2)
         {
             Writeline("Creating Log Message Entry ...");
-          
+
             var logRes = await cl2.NewLogEntry(new LogMessage()
             {
                 Title = "New Log MEssage" + DateTime.Now,
@@ -71,7 +71,7 @@ namespace SethWebster.OpenLogging.Console
         private static async Task<Models.Client> CreateClient(string uri, OpenLoggingClient cl)
         {
             Writeline("Creating Client...");
-            var clientCreationResult = await cl.CreateClient(new SethWebster.OpenLogging.Models.Client() { ClientName = "Southwest", Password = "testpassword" });
+            var clientCreationResult = await cl.CreateClient(new SethWebster.OpenLogging.Models.Client() { ClientName = "Southwest" });
             Writeline("Created Client #" + clientCreationResult.ClientId);
             return clientCreationResult;
         }

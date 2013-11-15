@@ -53,7 +53,7 @@ namespace SethWebster.OpenLogging.Client
         }
         public async Task<SethWebster.OpenLogging.Models.Client> CreateClient(SethWebster.OpenLogging.Models.Client client)
         {
-            var res = await CreateItem<object, SethWebster.OpenLogging.Models.Client>("/api/clients", new { client.ClientName, client.Password }, false);
+            var res = await CreateItem<object, SethWebster.OpenLogging.Models.Client>("/api/clients", new { client.ClientName }, false);
             return (SethWebster.OpenLogging.Models.Client)res;
         }
         public async Task<SethWebster.OpenLogging.Models.Client> DeleteClient(SethWebster.OpenLogging.Models.Client client)

@@ -26,14 +26,6 @@ namespace SethWebster.OpenLogging.Models
         public Guid CurrentApiKey { get; set; }
         public ICollection<LogMessage> LogMessages { get; set; }
 
-        [Required]
-        [JsonIgnore]
-        public string Password
-        {
-
-            get;
-            set;
-        }
         public DateTimeOffset DateCreated { get; set; }
     }
 }

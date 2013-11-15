@@ -228,6 +228,10 @@
     <Compile Include="Migrations\201311151549512_added-required-to-client.Designer.cs">
       <DependentUpon>201311151549512_added-required-to-client.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201311152355107_remove-password-from-client.cs" />
+    <Compile Include="Migrations\201311152355107_remove-password-from-client.Designer.cs">
+      <DependentUpon>201311152355107_remove-password-from-client.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\ClientCreationModel.cs" />
@@ -325,6 +329,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201311151549512_added-required-to-client.resx">
       <DependentUpon>201311151549512_added-required-to-client.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201311152355107_remove-password-from-client.resx">
+      <DependentUpon>201311152355107_remove-password-from-client.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

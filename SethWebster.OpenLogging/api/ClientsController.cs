@@ -92,8 +92,7 @@ namespace SethWebster.OpenLogging.api
             }
             Client client = new Client()
             {
-                ClientName = clientModel.ClientName,
-                Password = clientModel.Password
+                ClientName = clientModel.ClientName
             };
 
             db.Clients.Add(client);

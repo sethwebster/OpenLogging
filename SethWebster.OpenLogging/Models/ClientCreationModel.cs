@@ -21,15 +21,8 @@ namespace SethWebster.OpenLogging.Models
         public string ClientName { get; set; }
         public Guid CurrentApiKey { get; set; }
         public ICollection<LogMessage> LogMessages { get; set; }
-        [Required]
 
-        
-        public string Password
-        {
 
-            get;
-            set;
-        }
         public DateTimeOffset DateCreated { get; set; }
     }
 }
