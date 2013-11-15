@@ -8,6 +8,7 @@ using System.Web;
 
 namespace SethWebster.OpenLogging.Models
 {
+
     public class Client
     {
         public Client()
@@ -17,10 +18,13 @@ namespace SethWebster.OpenLogging.Models
             this.CurrentApiKey = Guid.NewGuid();
         }
         public int ClientId { get; set; }
+        public User Owner  { get; set; }
+
         [Required]
         public string ClientName { get; set; }
         public Guid CurrentApiKey { get; set; }
         public ICollection<LogMessage> LogMessages { get; set; }
+
         [Required]
         [JsonIgnore]
         public string Password
