@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using System.Web.Http;
 using System.Web.Http.Description;
 using SethWebster.OpenLogging.Models;
+using SethWebster.OpenLogging.Hubs;
 
 namespace SethWebster.OpenLogging.api
 {
@@ -88,6 +89,7 @@ namespace SethWebster.OpenLogging.api
             }
 
             await data.SaveChangesAsync();
+            LogMessageSyndication.ReportMessage(logmessage);
             return CreatedAtRoute("DefaultApi", new { id = logmessage.LogMessageId }, logmessage);
         }
 
