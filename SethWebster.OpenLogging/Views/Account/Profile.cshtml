@@ -1,0 +1,15 @@
+﻿@model SethWebster.OpenLogging.Models.User
+@{
+    ViewBag.Title = "Profile";
+}
+
+<h2>@Model.UserName</h2>
+
+<ul>
+    @foreach (var c in Model.Clients)
+    {
+        <li>
+            @(c.ClientName + " " + c.CurrentApiKey)
+        </li>
+    }
+</ul>

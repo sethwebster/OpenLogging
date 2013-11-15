@@ -13,7 +13,7 @@ using SethWebster.OpenLogging.Models;
 namespace SethWebster.OpenLogging.Controllers
 {
     [Authorize]
-    public class AccountController : Controller
+    public partial class AccountController : Controller
     {
         public AccountController()
             : this(new UserManager<ApplicationUser>(new UserStore<ApplicationUser>(new ApplicationDbContext())))
