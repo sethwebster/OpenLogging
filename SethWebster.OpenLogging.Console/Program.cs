@@ -21,20 +21,22 @@ namespace SethWebster.OpenLogging.Console
             uri = "http://openlogger/api/";
             // Uncomment this line when not using Fiddler
             // uri = "http://localhost:60757/api/";
+            Guid accountApiKey = new Guid("BF59BE01-19C4-4517-BF76-6A0AE4F24720");
+            OpenLoggingAccountClient acctClient = new OpenLoggingAccountClient(accountApiKey, new Uri(uri));
+
             Writeline("Using " + uri + " as endpoint for operations");
-            OpenLoggingClient cl = new Client.OpenLoggingClient(new Uri(uri));
-            var clientCreationResult = await CreateClient(uri, cl);
-            cl = new OpenLoggingClient(clientCreationResult.CurrentApiKey, new Uri(uri));
-            var clientGetResult = await cl.GetClient("Southwest");
+            var clientCreationResult = await CreateClient(uri, acctClient);
+            var clientGetResult = await acctClient.GetClient("Southwest");
+            OpenLoggingClient cl = new Client.OpenLoggingClient(clientCreationResult.CurrentApiKey, new Uri(uri));
             Writeline(clientGetResult.ClientName + " " + clientGetResult.CurrentApiKey + " fetched OK");
             var logCreationResult = await CreateLogEntry(uri, cl);
-            var listClientsResult = await ListClients(cl);
+            var listClientsResult = await ListClients(acctClient);
             return logCreationResult;
 
 
         }
 
-        private static async Task<object> ListClients(OpenLoggingClient cl)
+        private static async Task<object> ListClients(OpenLoggingAccountClient cl)
         {
             var res = await cl.ListClients();
             Writeline(res.Count() + " clients");
@@ -46,7 +48,7 @@ namespace SethWebster.OpenLogging.Console
             return res;
         }
 
-        private static async Task<Models.Client> DeleteClient(Models.Client client, OpenLoggingClient cl)
+        private static async Task<Models.Client> DeleteClient(Models.Client client, OpenLoggingAccountClient cl)
         {
             Writeline("Deleting Client #" + client.ClientId);
             var res = await cl.DeleteClient(client);
@@ -68,7 +70,7 @@ namespace SethWebster.OpenLogging.Console
             return logRes;
         }
 
-        private static async Task<Models.Client> CreateClient(string uri, OpenLoggingClient cl)
+        private static async Task<Models.Client> CreateClient(string uri, OpenLoggingAccountClient cl)
         {
             Writeline("Creating Client...");
             var clientCreationResult = await cl.CreateClient(new SethWebster.OpenLogging.Models.Client() { ClientName = "Southwest" });

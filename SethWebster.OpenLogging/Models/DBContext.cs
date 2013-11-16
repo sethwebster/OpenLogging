@@ -21,6 +21,7 @@ namespace SethWebster.OpenLogging.Models
         {
             base.OnModelCreating(modelBuilder);
             modelBuilder.Entity<LogMessage>().HasRequired(l => l.Client).WithMany(c => c.LogMessages).WillCascadeOnDelete();
+            modelBuilder.Entity<Client>().HasRequired(l => l.Owner).WithMany(c => c.Clients).WillCascadeOnDelete();
         }
 
     }

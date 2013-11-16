@@ -2,6 +2,7 @@
 using SethWebster.OpenLogging.Models;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
@@ -10,50 +11,136 @@ using System.Threading.Tasks;
 
 namespace SethWebster.OpenLogging.Client
 {
-    public class OpenLoggingClient
+
+    public abstract class OpenLoggingClientBase
     {
-        static int numb = 0;
         Guid _clientApiKey = Guid.Empty;
-        Uri _endpoint = new Uri("https://openlogger.azurewebsites.net/api");
+        protected Uri _endpoint = new Uri("https://openlogger.azurewebsites.net/api");
         private AuthorizationTicket _ticket = new AuthorizationTicket();
 
-        #region CTOR
-        public OpenLoggingClient()
+        public Uri EndPoint { get { return _endpoint; } }
+        protected abstract string AuthenticationKind { get; }
+        public OpenLoggingClientBase()
         {
-            numb++;
-            Console.WriteLine("Created OpenLoggingClient #" + numb);
         }
-        public OpenLoggingClient(Uri endpoint)
+        public OpenLoggingClientBase(Uri endpoint)
             : this()
         {
             _endpoint = endpoint;
         }
-        public OpenLoggingClient(Guid apiKey)
+        public OpenLoggingClientBase(Guid apiKey)
             : this()
         {
             _clientApiKey = apiKey;
         }
-        public OpenLoggingClient(Guid apiKey, Uri endpoint)
+        public OpenLoggingClientBase(Guid apiKey, Uri endpoint)
             : this()
         {
             _clientApiKey = apiKey;
             _endpoint = endpoint;
         }
-        #endregion
 
         public Guid ApiKey
         {
             get { return _clientApiKey; }
             protected set { _clientApiKey = value; }
         }
-        public async Task<LogMessage> NewLogEntry(LogMessage message)
+
+        protected async Task<TReturn> PerformAction<TInput, TReturn>(string actionUrl, HttpMethod method, TInput input, bool requiresAuth)
         {
-            var res = await CreateItem<LogMessage, LogMessage>("/api/log", message, true);
-            return res;
+            var cli = CreateHttpClient(requiresAuth);
+            HttpResponseMessage response = null;
+            switch (method.ToString())
+            {
+                case "POST":
+                    response = await cli.PostAsJsonAsync<TInput>(new Uri(actionUrl, UriKind.Relative), input);
+                    break;
+                case "PUT":
+                    response = await cli.PutAsJsonAsync<TInput>(new Uri(actionUrl), input);
+                    break;
+                case "DELETE":
+                    response = await cli.DeleteAsync(actionUrl + "/" + input);
+                    break;
+            }
+            var strRes = await response.Content.ReadAsStringAsync();
+            var message2 = JsonConvert.DeserializeObject<TReturn>(strRes);
+            return message2;
+
         }
+        protected async Task<TReturn> CreateItem<TInput, TReturn>(string actionUrl, TInput item, bool requiresAuth)
+        {
+            return await PerformAction<TInput, TReturn>(actionUrl, HttpMethod.Post, item, requiresAuth);
+        }
+
+        protected async Task<T> DeleteItem<T>(string actionUrl, int itemId, bool requiresAuth)
+        {
+            return await PerformAction<int, T>(actionUrl, HttpMethod.Delete, itemId, requiresAuth);
+        }
+
+        protected HttpClient CreateHttpClient(bool requiresAuth)
+        {
+            var cli = new HttpClient();
+            cli.BaseAddress = _endpoint;
+            if (requiresAuth)
+            {
+                Task.WaitAll(EnsureAuthTicket());
+                cli.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _ticket.AccessToken);
+            }
+            return cli;
+        }
+
+        protected async Task EnsureAuthTicket()
+        {
+            ValidateApiKey();
+            if (_ticket.IsExpired)
+            {
+                Console.WriteLine("Ticket Expired, Retrieving...");
+                HttpClient cli = new HttpClient();
+                cli.BaseAddress = _endpoint;
+                _ticket = await PerformAction<TokenLoginModel, AuthorizationTicket>(
+                    "/api/auth/token",
+                   HttpMethod.Post, new TokenLoginModel()
+                   {
+                       Apikey = _clientApiKey,
+                       Kind = AuthenticationKind
+                   }, false);
+
+                Console.WriteLine("Ticket Received: {0} {1} {2}", _ticket.Username, _ticket.AccessToken, _ticket.Expires);
+            }
+
+        }
+        protected void ValidateApiKey()
+        {
+            if (_clientApiKey == Guid.Empty)
+            {
+                throw new InvalidOperationException("API Key is not set");
+            }
+        }
+    }
+
+
+    public class OpenLoggingAccountClient : OpenLoggingClientBase
+    {
+        public OpenLoggingAccountClient()
+            : base()
+        {
+        }
+        public OpenLoggingAccountClient(Uri endpoint)
+            : base(endpoint) { }
+        public OpenLoggingAccountClient(Guid apiKey)
+            : base(apiKey)
+        {
+
+        }
+        public OpenLoggingAccountClient(Guid apiKey, Uri endpoint)
+            : base(apiKey, endpoint)
+        {
+
+        }
+
         public async Task<SethWebster.OpenLogging.Models.Client> CreateClient(SethWebster.OpenLogging.Models.Client client)
         {
-            var res = await CreateItem<object, SethWebster.OpenLogging.Models.Client>("/api/clients", new { client.ClientName }, false);
+            var res = await CreateItem<object, SethWebster.OpenLogging.Models.Client>("/api/clients", new { client.ClientName }, true);
             return (SethWebster.OpenLogging.Models.Client)res;
         }
         public async Task<SethWebster.OpenLogging.Models.Client> DeleteClient(SethWebster.OpenLogging.Models.Client client)
@@ -73,9 +160,9 @@ namespace SethWebster.OpenLogging.Client
         {
             HttpClient cli = new HttpClient();
             cli.BaseAddress = _endpoint;
-            if (_clientApiKey != Guid.Empty)
+            if (ApiKey != Guid.Empty)
             {
-                cli.DefaultRequestHeaders.Add("x-auth", _clientApiKey.ToString());
+                cli.DefaultRequestHeaders.Add("x-auth", ApiKey.ToString());
             }
             var res = await cli.GetAsync("/api/clients");
             var strRes = await res.Content.ReadAsStringAsync();
@@ -83,59 +170,44 @@ namespace SethWebster.OpenLogging.Client
             return message2;
         }
 
-        private async Task<TReturn> CreateItem<TInput, TReturn>(string actionUrl, TInput item, bool requiresAuth)
-        {
-            var cli = CreateHttpClient(requiresAuth);
-            var res = await cli.PostAsJsonAsync<TInput>(new Uri(actionUrl, UriKind.Relative), item);
-            var strRes = await res.Content.ReadAsStringAsync();
-            var message2 = JsonConvert.DeserializeObject<TReturn>(strRes);
-            return message2;
-        }
 
-        private async Task<T> DeleteItem<T>(string actionUrl, int itemId, bool requiresAuth)
+        protected override string AuthenticationKind
         {
-            var cli = CreateHttpClient(requiresAuth);
-            var res = await cli.DeleteAsync(actionUrl + "/" + itemId);
-            var strRes = await res.Content.ReadAsStringAsync();
-            var message2 = JsonConvert.DeserializeObject<T>(strRes);
-            return message2;
+            get { return "account"; }
         }
+    }
+    /// <summary>
+    /// For creating log entries
+    /// </summary>
+    public class OpenLoggingClient : OpenLoggingClientBase
+    {
 
-        private HttpClient CreateHttpClient(bool requiresAuth)
+        public OpenLoggingClient()
+            : base()
         {
-            var cli = new HttpClient();
-            cli.BaseAddress = _endpoint;
-            if (requiresAuth)
-            {
-                Task.WaitAll(EnsureAuthTicket());
-                cli.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _ticket.AccessToken);
-            }
-            return cli;
         }
-
-        private async Task EnsureAuthTicket()
+        public OpenLoggingClient(Uri endpoint)
+            : base(endpoint) { }
+        public OpenLoggingClient(Guid apiKey)
+            : base(apiKey)
         {
-            ValidateApiKey();
-            if (_ticket.IsExpired)
-            {
-                Console.WriteLine("Ticket Expired, Retrieving...");
-                HttpClient cli = new HttpClient();
-                cli.BaseAddress = _endpoint;
-                var res = await cli.PostAsJsonAsync(new Uri("/api/auth/token", UriKind.Relative), new TokenLoginModel()
-                {
-                    Apikey = _clientApiKey
-                });
-                _ticket = await res.Content.ReadAsAsync<AuthorizationTicket>();
-                Console.WriteLine("Ticket Received: {0} {1} {2}", _ticket.Username, _ticket.AccessToken, _ticket.Expires);
-            }
 
         }
-        private void ValidateApiKey()
+        public OpenLoggingClient(Guid apiKey, Uri endpoint)
+            : base(apiKey, endpoint)
         {
-            if (_clientApiKey == Guid.Empty)
-            {
-                throw new InvalidOperationException("API Key is not set");
-            }
+
         }
+        public async Task<LogMessage> NewLogEntry(LogMessage message)
+        {
+            var res = await CreateItem<LogMessage, LogMessage>("/api/log", message, true);
+            return res;
+        }
+
+        protected override string AuthenticationKind
+        {
+            get { return "client"; }
+        }
+
     }
 }

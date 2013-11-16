@@ -82,6 +82,7 @@ namespace SethWebster.OpenLogging.Controllers
                 var result = await UserManager.CreateAsync(user, model.Password);
                 if (result.Succeeded)
                 {
+                    await MakeApiKey(user);
                     await SignInAsync(user, isPersistent: false);
                     return RedirectToAction("Index", "Home");
                 }
@@ -93,6 +94,13 @@ namespace SethWebster.OpenLogging.Controllers
 
             // If we got this far, something failed, redisplay form
             return View(model);
+        }
+
+        private async Task MakeApiKey(ApplicationUser user)
+        {
+            var appUser = _data.Users.First(f => f.UserName.Equals(user.UserName));
+            appUser.UserApiKey = Guid.NewGuid();
+            await _data.SaveChangesAsync();
         }
 
         //

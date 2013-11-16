@@ -18,34 +18,77 @@ namespace SethWebster.OpenLogging.api
         [HttpPost]
         public IHttpActionResult Token(TokenLoginModel model)
         {
-            if (model==null)
+            if (model == null)
             {
                 return BadRequest();
             }
             if (ModelState.IsValid)
             {
-                Client user = TryFetchUser(model);
-                
-                if (user == null)
+                if (model.Kind.Equals("client", StringComparison.OrdinalIgnoreCase))
                 {
-                    return this.ResponseMessage(new HttpResponseMessage(HttpStatusCode.Unauthorized));
+                    return CreateTokenForClient(model);
                 }
-
-                if (model.Apikey!= default(Guid) && user.CurrentApiKey!=model.Apikey)
+                else if (model.Kind.Equals("account", StringComparison.OrdinalIgnoreCase))
                 {
-                    return BadRequest("Api Key Invalid");
+                    return CreateTokenForAccount(model);
                 }
-
-                return this.ResponseMessage(new HttpResponseMessage(HttpStatusCode.OK)
-                {
-                    Content = GetTicket(user)
-                });
+                else return BadRequest("Unknown token request kind");
             }
             else
             {
                 return BadRequest(ModelState);
             }
 
+        }
+
+        private IHttpActionResult CreateTokenForAccount(TokenLoginModel model)
+        {
+            User user = TryFetchAccount(model);
+
+            if (user == null)
+            {
+                return this.ResponseMessage(new HttpResponseMessage(HttpStatusCode.Unauthorized));
+            }
+
+            if (model.Apikey != default(Guid) && user.UserApiKey != model.Apikey)
+            {
+                return BadRequest("Api Key Invalid");
+            }
+
+            return this.ResponseMessage(new HttpResponseMessage(HttpStatusCode.OK)
+            {
+                Content = GetAccountTicket(user)
+            });
+        }
+
+        private User TryFetchAccount(TokenLoginModel model)
+        {
+            User user = null;
+            if (model.Apikey != (default(Guid)) && user == null)
+            {
+                user = _data.Users.FirstOrDefault(c => c.UserApiKey == model.Apikey);
+            }
+            return user;
+        }
+
+        private IHttpActionResult CreateTokenForClient(TokenLoginModel model)
+        {
+            Client user = TryFetchUser(model);
+
+            if (user == null)
+            {
+                return this.ResponseMessage(new HttpResponseMessage(HttpStatusCode.Unauthorized));
+            }
+
+            if (model.Apikey != default(Guid) && user.CurrentApiKey != model.Apikey)
+            {
+                return BadRequest("Api Key Invalid");
+            }
+
+            return this.ResponseMessage(new HttpResponseMessage(HttpStatusCode.OK)
+            {
+                Content = GetClientTicket(user)
+            });
         }
 
         private Client TryFetchUser(TokenLoginModel model)
@@ -58,7 +101,7 @@ namespace SethWebster.OpenLogging.api
             return user;
         }
 
-        public ObjectContent<object> GetTicket(Client client)
+        public ObjectContent<object> GetClientTicket(Client client)
         {
             var identity = new ClaimsIdentity(Startup.OAuthBearerOptions.AuthenticationType);
             identity.AddClaim(new Claim(ClaimTypes.Name, client.ClientName));
@@ -69,6 +112,21 @@ namespace SethWebster.OpenLogging.api
             return new ObjectContent<object>(new
             {
                 UserName = client.ClientName,
+                AccessToken = Startup.OAuthBearerOptions.AccessTokenFormat.Protect(ticket),
+                Expires = ticket.Properties.ExpiresUtc
+            }, Configuration.Formatters.JsonFormatter);
+        }
+        public ObjectContent<object> GetAccountTicket(User client)
+        {
+            var identity = new ClaimsIdentity(Startup.OAuthBearerOptions.AuthenticationType);
+            identity.AddClaim(new Claim(ClaimTypes.Name, client.UserName));
+            AuthenticationTicket ticket = new AuthenticationTicket(identity, new AuthenticationProperties());
+            var currentUtc = new SystemClock().UtcNow;
+            ticket.Properties.IssuedUtc = currentUtc;
+            ticket.Properties.ExpiresUtc = currentUtc.Add(TimeSpan.FromMinutes(30));
+            return new ObjectContent<object>(new
+            {
+                UserName = client.UserName,
                 AccessToken = Startup.OAuthBearerOptions.AccessTokenFormat.Protect(ticket),
                 Expires = ticket.Properties.ExpiresUtc
             }, Configuration.Formatters.JsonFormatter);

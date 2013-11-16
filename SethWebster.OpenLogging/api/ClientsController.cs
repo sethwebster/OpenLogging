@@ -25,6 +25,7 @@ namespace SethWebster.OpenLogging.api
 
         // GET api/Clients/5
         [ResponseType(typeof(Client))]
+        [Authorize]
         public async Task<IHttpActionResult> GetClient(int id)
         {
             Client client = await db.Clients.FindAsync(id);
@@ -37,6 +38,7 @@ namespace SethWebster.OpenLogging.api
         }
 
         [ResponseType(typeof(Client))]
+        [Authorize]
         public async Task<IHttpActionResult> GetClient(string name)
         {
             Client client = await db.Clients.FirstOrDefaultAsync(c => c.ClientName.Equals(name));
@@ -49,6 +51,7 @@ namespace SethWebster.OpenLogging.api
         }
 
         // PUT api/Clients/5
+        [Authorize]
         public async Task<IHttpActionResult> PutClient(int id, Client client)
         {
             if (!ModelState.IsValid)
@@ -84,15 +87,22 @@ namespace SethWebster.OpenLogging.api
 
         // POST api/Clients
         [ResponseType(typeof(Client))]
+        [Authorize]
         public async Task<IHttpActionResult> PostClient(ClientCreationModel clientModel)
         {
+            var owner = db.Users.FirstOrDefault(u => u.UserName == User.Identity.Name);
+            if (owner==null)
+            {
+                return this.ResponseMessage(new HttpResponseMessage(HttpStatusCode.Unauthorized));
+            }
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
             Client client = new Client()
             {
-                ClientName = clientModel.ClientName
+                ClientName = clientModel.ClientName,
+                Owner = owner
             };
 
             db.Clients.Add(client);
