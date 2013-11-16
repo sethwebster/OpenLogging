@@ -24,14 +24,23 @@ namespace SethWebster.OpenLogging.Console
             Guid accountApiKey = new Guid("BF59BE01-19C4-4517-BF76-6A0AE4F24720");
             OpenLoggingAccountClient acctClient = new OpenLoggingAccountClient(accountApiKey, new Uri(uri));
 
-            Writeline("Using " + uri + " as endpoint for operations");
-            var clientCreationResult = await CreateClient(uri, acctClient);
-            var clientGetResult = await acctClient.GetClient("Southwest");
-            OpenLoggingClient cl = new Client.OpenLoggingClient(clientCreationResult.CurrentApiKey, new Uri(uri));
-            Writeline(clientGetResult.ClientName + " " + clientGetResult.CurrentApiKey + " fetched OK");
-            var logCreationResult = await CreateLogEntry(uri, cl);
-            var listClientsResult = await ListClients(acctClient);
-            return logCreationResult;
+            var client = await acctClient.CreateClient(new Models.Client()
+            {
+                ClientName = "The Test Client"
+            });
+
+            OpenLoggingClient logClient = new OpenLoggingClient(client.CurrentApiKey, new Uri(uri));
+            var entry = await logClient.NewLogEntry(new LogMessage()
+            {
+                Title = "The Test Log Entry",
+                Message = "This is the message",
+                Category = "INFO",
+                Body = "This is the extended description",
+                DateOfEvent = DateTimeOffset.Now.AddSeconds(-25)
+            });
+            Writeline("All created. ENTER to Delete"); Readline();
+            await acctClient.DeleteClient(client);
+            return entry;
 
 
         }
