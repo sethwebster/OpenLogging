@@ -14,6 +14,7 @@ namespace SethWebster.OpenLogging.Models
         public User()
         {
             this.Clients = new Collection<Client>();
+            this.UserApiKey = Guid.NewGuid();
         }
         [MaxLength(128)]
         [Key]
@@ -23,7 +24,7 @@ namespace SethWebster.OpenLogging.Models
         public string PasswordHash { get; set; }
         public string SecurityStamp { get; set; }
         public string Discriminator { get; set; }
-
+        public Guid UserApiKey { get; set; }
         public ICollection<Client> Clients { get; set; }
     }
 }

@@ -232,6 +232,10 @@
     <Compile Include="Migrations\201311152355107_remove-password-from-client.Designer.cs">
       <DependentUpon>201311152355107_remove-password-from-client.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201311160002429_added-api-key-at-account-level.cs" />
+    <Compile Include="Migrations\201311160002429_added-api-key-at-account-level.Designer.cs">
+      <DependentUpon>201311160002429_added-api-key-at-account-level.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\ClientCreationModel.cs" />
@@ -332,6 +336,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201311152355107_remove-password-from-client.resx">
       <DependentUpon>201311152355107_remove-password-from-client.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201311160002429_added-api-key-at-account-level.resx">
+      <DependentUpon>201311160002429_added-api-key-at-account-level.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
