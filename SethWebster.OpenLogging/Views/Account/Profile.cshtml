@@ -11,7 +11,8 @@
     {
         <li>
             <div class='client-name'>@(c.ClientName) </div>
-            <div class="client-api-key">@c.CurrentApiKey)</div>
+            <div class="client-api-key">@c.CurrentApiKey</div>
+            <div class="client-actions">@Html.ActionLink("Log Entries", "Index", new { Controller = "LogMessages", client = c.ClientId }) | @Html.ActionLink("Delete", "DeleteClient", new { id = c.ClientId })</div>
         </li>
     }
 </ul>

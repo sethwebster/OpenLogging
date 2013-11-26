@@ -39,5 +39,12 @@ namespace SethWebster.OpenLogging.Controllers
 
             return View(client);
         }
+
+        public async Task<ActionResult> DeleteClient(int id)
+        {
+            _data.Clients.Remove(_data.Clients.Find(id));
+            await _data.SaveChangesAsync();
+            return RedirectToAction("Profile");
+        }
     }
 }
