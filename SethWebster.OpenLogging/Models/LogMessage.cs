@@ -2,11 +2,12 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using System.Runtime.Serialization;
 using System.Web;
 
 namespace SethWebster.OpenLogging.Models
 {
-    public class LogMessage
+    public class LogMessage 
     {
         public LogMessage()
         {

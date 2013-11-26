@@ -10,15 +10,28 @@ namespace SethWebster.OpenLogging.Hubs
 {
     public class LogMessageSyndication
     {
+        static DBContext _data = new DBContext();
+        static Dictionary<int, string> _clientIdLookup = new Dictionary<int, string>();
+
         public static async void ReportMessage(LogMessage message)
         {
             var g = GlobalHost.ConnectionManager.GetHubContext<LoggingHub>();
-            //TODO: Prevent circular reference here            
-            if (message.Client != null)
+            var clientId = message.Client.ClientId;
+            var userId = LookupUserId(message);
+            message = message.Clone();
+            //TODO: Prevent circular reference here 
+            message.Client = null;
+            g.Clients.User(userId).newLogMessage(message);
+        }
+
+
+        private static string LookupUserId(LogMessage message)
+        {
+            if (!_clientIdLookup.ContainsKey(message.Client.ClientId))
             {
-                message.Client = null;
+                _clientIdLookup.Add(message.Client.ClientId, _data.Clients.Include("Owner").First(c => c.ClientId == message.Client.ClientId).Owner.UserName);
             }
-            g.Clients.All.newLogMessage(message);
+            return _clientIdLookup[message.Client.ClientId];
         }
     }
 }

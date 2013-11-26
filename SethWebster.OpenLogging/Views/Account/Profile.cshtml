@@ -3,7 +3,7 @@
     ViewBag.Title = "Profile";
 }
 
-<h2>@Model.UserName</h2>
+<h2>@Model.UserName (@Model.UserApiKey)</h2>
 
 @Html.ActionLink("Create New Client", "CreateClient")
 <ul id="client-list">

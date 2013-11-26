@@ -21,7 +21,7 @@ namespace SethWebster.OpenLogging.Console
             uri = "http://openlogger/api/";
             // Uncomment this line when not using Fiddler
             // uri = "http://localhost:60757/api/";
-            Guid accountApiKey = new Guid("BF59BE01-19C4-4517-BF76-6A0AE4F24720");
+            Guid accountApiKey = new Guid("2d9557a1-1be5-44ab-9b9b-1ec26d79d2b0");
             OpenLoggingAccountClient acctClient = new OpenLoggingAccountClient(accountApiKey, new Uri(uri));
 
             var client = await acctClient.CreateClient(new Models.Client()

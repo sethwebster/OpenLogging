@@ -9,9 +9,11 @@ namespace SethWebster.OpenLogging.Hubs
 {
     public class LoggingHub : Hub
     {
-        public void NewLogMessage(LogMessage message)
+       
+
+        public override System.Threading.Tasks.Task OnConnected()
         {
-            Clients.All.newLogMessage(message);
+            return base.OnConnected();
         }
         public void Hello()
         {
