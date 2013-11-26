@@ -20,6 +20,7 @@
                 // Add the message to the page.
                 $('#messages').append(
                     "<div class='log-message'>" +
+                    "<div class='log-message-client'>" + message.Client.ClientName + "</div>" +
                     "<div class='log-message-category'>" + message.Category + "</div>" +
                     "<div class='log-message-title'>" + message.Title + "</div>" +
                     "<div class='log-message-message'>" + message.Message + "</div>" +

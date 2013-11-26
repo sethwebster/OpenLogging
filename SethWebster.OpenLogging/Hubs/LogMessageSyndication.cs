@@ -20,7 +20,7 @@ namespace SethWebster.OpenLogging.Hubs
             var userId = LookupUserId(message);
             message = message.Clone();
             //TODO: Prevent circular reference here 
-            message.Client = null;
+            message.Client.LogMessages = null;
             g.Clients.User(userId).newLogMessage(message);
         }
 
