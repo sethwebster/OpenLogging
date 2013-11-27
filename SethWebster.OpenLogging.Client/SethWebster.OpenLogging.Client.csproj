@@ -50,7 +50,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AuthorizationTicket.cs" />
-    <Compile Include="OpenLogginBase.cs" />
+    <Compile Include="OpenLoggingAccountClient.cs" />
+    <Compile Include="OpenLoggingClientBase.cs" />
     <Compile Include="OpenLoggingClient.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
