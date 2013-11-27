@@ -39,6 +39,11 @@ namespace SethWebster.OpenLogging.Models
             return await JsonConvert.DeserializeObjectAsync<T>(Context);
         }
 
+        public void SetContext<T>(T context)
+        {
+            this.Context = JsonConvert.SerializeObject(context);
+        }
+
         [Required]
         public Client Client { get; set; }
     }
