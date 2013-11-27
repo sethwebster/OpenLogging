@@ -44,7 +44,7 @@ namespace SethWebster.OpenLogging.api
         public async Task<IHttpActionResult> GetClient(string name)
         {
             var owner = await db.Users.Include("Clients").FirstAsync(u => u.UserName.Equals(User.Identity.Name));
-            Client client = owner.Clients.FirstOrDefault(c => c.ClientName.Equals(name,StringComparison.OrdinalIgnoreCase));
+            Client client = owner.Clients.FirstOrDefault(c => c.ClientName.Equals(name, StringComparison.OrdinalIgnoreCase));
             if (client == null)
             {
                 return NotFound();
@@ -57,12 +57,19 @@ namespace SethWebster.OpenLogging.api
         [Authorize]
         public async Task<IHttpActionResult> PutClient(int id, Client client)
         {
+            var owner = await db.Users.Include("Clients").FirstAsync(u => u.UserName.Equals(User.Identity.Name));
+
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
             if (id != client.ClientId)
+            {
+                return BadRequest();
+            }
+
+            if (!owner.Clients.Any(c => c.ClientId == id))
             {
                 return BadRequest();
             }
@@ -118,10 +125,18 @@ namespace SethWebster.OpenLogging.api
         [ResponseType(typeof(Client))]
         public async Task<IHttpActionResult> DeleteClient(int id)
         {
+            var owner = db.Users.FirstOrDefault(u => u.UserName == User.Identity.Name);
+         
             Client client = await db.Clients.FindAsync(id);
+            
             if (client == null)
             {
                 return NotFound();
+            }
+
+            if (!owner.Clients.Any(c => c.ClientId == id))
+            {
+                return BadRequest();
             }
 
             db.Clients.Remove(client);
