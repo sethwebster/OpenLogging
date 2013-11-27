@@ -29,7 +29,8 @@ namespace SethWebster.OpenLogging.api
         [Authorize]
         public async Task<IHttpActionResult> GetClient(int id)
         {
-            Client client = await db.Clients.FindAsync(id);
+            var owner = await db.Users.Include("Clients").FirstAsync(u => u.UserName.Equals(User.Identity.Name));
+            Client client = owner.Clients.FirstOrDefault(c => c.ClientId == id);
             if (client == null)
             {
                 return NotFound();
@@ -42,7 +43,8 @@ namespace SethWebster.OpenLogging.api
         [Authorize]
         public async Task<IHttpActionResult> GetClient(string name)
         {
-            Client client = await db.Clients.FirstOrDefaultAsync(c => c.ClientName.Equals(name));
+            var owner = await db.Users.Include("Clients").FirstAsync(u => u.UserName.Equals(User.Identity.Name));
+            Client client = owner.Clients.FirstOrDefault(c => c.ClientName.Equals(name,StringComparison.OrdinalIgnoreCase));
             if (client == null)
             {
                 return NotFound();
@@ -92,7 +94,7 @@ namespace SethWebster.OpenLogging.api
         public async Task<IHttpActionResult> PostClient(ClientCreationModel clientModel)
         {
             var owner = db.Users.FirstOrDefault(u => u.UserName == User.Identity.Name);
-            if (owner==null)
+            if (owner == null)
             {
                 return this.ResponseMessage(new HttpResponseMessage(HttpStatusCode.Unauthorized));
             }
