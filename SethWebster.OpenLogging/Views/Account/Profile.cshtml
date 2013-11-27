@@ -3,7 +3,7 @@
     ViewBag.Title = "Profile";
 }
 
-<h2>@Model.UserName (@Model.UserApiKey) @Html.ActionLink("Reset", "ResetApiKey")</h2>
+<h2>@Model.UserName (@Model.UserApiKey) @Html.ActionLink("Reset", "ResetApiKey", null, new { @class = "confirm" })</h2>
 
 @Html.ActionLink("Create New Client", "CreateClient")
 <ul id="client-list">
@@ -12,7 +12,7 @@
         <li>
             <div class='client-name'>@(c.ClientName) </div>
             <div class="client-api-key">@c.CurrentApiKey @Html.ActionLink("Reset", "ResetClientApiKey", new { id = c.ClientId })</div>
-            <div class="client-actions">@Html.ActionLink("Log Entries", "Index", new { Controller = "LogMessages", client = c.ClientId }) | @Html.ActionLink("Delete", "DeleteClient", new { id = c.ClientId })</div>
+            <div class="client-actions">@Html.ActionLink("Log Entries", "Index", new { Controller = "LogMessages", client = c.ClientId }, new { @class = "confirm" }) | @Html.ActionLink("Delete", "DeleteClient", new { id = c.ClientId }, new { @class = "confirm" })</div>
         </li>
     }
 </ul>

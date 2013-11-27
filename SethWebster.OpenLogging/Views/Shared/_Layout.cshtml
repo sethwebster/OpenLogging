@@ -40,5 +40,11 @@
     @Scripts.Render("~/bundles/jquery")
     @Scripts.Render("~/bundles/bootstrap")
     @RenderSection("scripts", required: false)
+    <script>
+        $(".confirm").click(function () {
+            var storedMessage = $(this).data("confirmation-message");
+            return confirm(storedMessage == "" ? "Are you sure?" : storedMessage);
+        });
+    </script>
 </body>
 </html>
