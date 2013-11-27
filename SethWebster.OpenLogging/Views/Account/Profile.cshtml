@@ -8,7 +8,7 @@
 @Html.ActionLink("Create New Client", "CreateClient")
 <ul id="client-list">
     @foreach (var c in Model.Clients)
-    {
+    { 
         <li>
             <div class='client-name'>@(c.ClientName) </div>
             <div class="client-api-key">@c.CurrentApiKey @Html.ActionLink("Reset", "ResetClientApiKey", new { id = c.ClientId }, new { @class = "confirm" })</div>
