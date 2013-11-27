@@ -1,8 +1,10 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Runtime.Serialization;
+using System.Threading.Tasks;
 using System.Web;
 
 namespace SethWebster.OpenLogging.Models
@@ -29,6 +31,14 @@ namespace SethWebster.OpenLogging.Models
         /// The Date this LogMessage is eligible for purge
         /// </summary>
         public DateTimeOffset DateOfExpiration { get; set; }
+
+        public string Context { get; set; }
+
+        public async Task<T> GetContextAsync<T>()
+        {
+            return await JsonConvert.DeserializeObjectAsync<T>(Context);
+        }
+
         [Required]
         public Client Client { get; set; }
     }
