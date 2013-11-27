@@ -19,6 +19,14 @@ namespace SethWebster.OpenLogging.Controllers
             return View(user);
         }
 
+        public async Task<ActionResult> ResetApiKey()
+        {
+            var user = _data.Users.FirstOrDefault(u => u.UserName.Equals(User.Identity.Name));
+            user.UserApiKey = Guid.NewGuid();
+            await _data.SaveChangesAsync();
+            return RedirectToAction("Profile");
+        }
+
         public async Task<ActionResult> CreateClient()
         {
             return View(new Client());
