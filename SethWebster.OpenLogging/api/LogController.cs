@@ -81,6 +81,10 @@ namespace SethWebster.OpenLogging.api
         {
             var client = GetClientFromHeaders();
             client.LogMessages.Add(logmessage);
+            if (null==logmessage)
+            {
+                return BadRequest("No log message was present");
+            }
             logmessage.Client = client;
             ModelState.Remove("logmessage.Client");
             if (!ModelState.IsValid)
