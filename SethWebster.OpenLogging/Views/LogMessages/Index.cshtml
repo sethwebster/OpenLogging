@@ -35,7 +35,7 @@
             // Create a function that the hub can call back to display messages.
             chat.client.newLogMessage = function (message) {
                 // Add the message to the page.
-                if (null==clientFilter || message.Client.ClientId==clientFilter){
+                if (isNullOrEmpty(clientFilter) || message.Client.ClientId==clientFilter){
                     $('#messages').append(
                         "<div class='log-message'>" +
                         "<div class='log-message-client'>" + message.Client.ClientName + "</div>" +
@@ -50,6 +50,7 @@
 
             $("#clients-list").change(function(){
                 clientFilter=$(this).val();
+                
             });
 
             $.connection.hub.start().done(function () {
@@ -65,6 +66,10 @@
         function htmlEncode(value) {
             var encodedValue = $('<div />').text(value).html();
             return encodedValue;
+        }
+
+        function isNullOrEmpty(s) {
+            return s==null || s=="";
         }
     </script>
 }
