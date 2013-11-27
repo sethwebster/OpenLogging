@@ -18,9 +18,10 @@ namespace SethWebster.OpenLogging.api
         private DBContext db = new DBContext();
 
         // GET api/Clients
+        [Authorize]
         public IQueryable<Client> GetClients()
         {
-            return db.Clients;
+            return db.Clients.Where(c => c.Owner.UserName.Equals(User.Identity.Name));
         }
 
         // GET api/Clients/5
