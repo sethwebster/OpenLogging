@@ -15,7 +15,7 @@ namespace SethWebster.OpenLogging.Controllers
         public async Task<ActionResult> Profile()
         {
             var user = _data.Users.Include("Clients").First(u => u.UserName == User.Identity.Name);
-           
+
             return View(user);
         }
 
@@ -25,6 +25,16 @@ namespace SethWebster.OpenLogging.Controllers
             user.UserApiKey = Guid.NewGuid();
             await _data.SaveChangesAsync();
             return RedirectToAction("Profile");
+        }
+
+        public async Task<ActionResult> ResetClientApiKey(int id)
+        {
+            var user = _data.Users.Include("Clients").First(u => u.UserName.Equals(User.Identity.Name));
+            var client = user.Clients.First(u => u.ClientId.Equals(id));
+            client.CurrentApiKey = Guid.NewGuid();
+            await _data.SaveChangesAsync();
+            return RedirectToAction("Profile");
+
         }
 
         public async Task<ActionResult> CreateClient()
