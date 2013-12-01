@@ -56,14 +56,14 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\SethWebster.OpenLogging\SethWebster.OpenLogging.csproj">
-      <Project>{32f9db7a-fb52-43e0-b45e-67b9cd6c84a8}</Project>
-      <Name>SethWebster.OpenLogging</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
     <None Include="packages.config" />
     <None Include="SethWebster.OpenLogging.Client.nuspec" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\SethWebster.OpenLogging.Models\SethWebster.OpenLogging.Models.csproj">
+      <Project>{a75f42ce-7087-4d2e-9102-ce898242ef15}</Project>
+      <Name>SethWebster.OpenLogging.Models</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />

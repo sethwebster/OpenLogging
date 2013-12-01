@@ -52,9 +52,9 @@
       <Project>{15a9b9f4-88da-4359-a627-7e8cb37ac878}</Project>
       <Name>SethWebster.OpenLogging.Client</Name>
     </ProjectReference>
-    <ProjectReference Include="..\SethWebster.OpenLogging\SethWebster.OpenLogging.csproj">
-      <Project>{32f9db7a-fb52-43e0-b45e-67b9cd6c84a8}</Project>
-      <Name>SethWebster.OpenLogging</Name>
+    <ProjectReference Include="..\SethWebster.OpenLogging.Models\SethWebster.OpenLogging.Models.csproj">
+      <Project>{a75f42ce-7087-4d2e-9102-ce898242ef15}</Project>
+      <Name>SethWebster.OpenLogging.Models</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

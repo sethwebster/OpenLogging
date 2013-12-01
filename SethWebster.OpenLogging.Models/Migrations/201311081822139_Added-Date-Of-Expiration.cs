@@ -1,4 +1,4 @@
-namespace SethWebster.OpenLogging.Migrations
+namespace SethWebster.OpenLogging.Models.Migrations
 {
     using System;
     using System.Data.Entity.Migrations;

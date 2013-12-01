@@ -1,4 +1,4 @@
-﻿using SethWebster.OpenLogging.Migrations;
+﻿using SethWebster.OpenLogging.Models.Migrations;
 using System;
 using System.Collections.Generic;
 using System.Data.Entity;
