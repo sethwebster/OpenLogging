@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 
 namespace SethWebster.OpenLogging.Client
 {
-    
+
     /// <summary>
     /// For creating log entries
     /// </summary>
@@ -27,7 +27,12 @@ namespace SethWebster.OpenLogging.Client
         {
 
         }
-        public async  Task<LogMessage> NewLogEntry(LogMessage message)
+        public LogMessage NewLogEntry(LogMessage message)
+        {
+            var res = CreateItem<LogMessage, LogMessage>("/api/log", message, true);
+            return res;
+        }
+        public async Task<LogMessage> NewLogEntryAsync(LogMessage message)
         {
             var res = await CreateItemAsync<LogMessage, LogMessage>("/api/log", message, true);
             return res;

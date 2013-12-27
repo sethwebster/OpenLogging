@@ -30,7 +30,7 @@ namespace SethWebster.OpenLogging.Console
             });
 
             OpenLoggingClient logClient = new OpenLoggingClient(client.CurrentApiKey, new Uri(uri));
-            var entry = await logClient.NewLogEntry(new LogMessage()
+            var entry = await logClient.NewLogEntryAsync(new LogMessage()
             {
                 Title = "The Test Log Entry",
                 Message = "This is the message",
@@ -68,7 +68,7 @@ namespace SethWebster.OpenLogging.Console
         {
             Writeline("Creating Log Message Entry ...");
             
-            var logRes = await cl2.NewLogEntry(new LogMessage()
+            var logRes = await cl2.NewLogEntryAsync(new LogMessage()
             {
                 Title = "New Log MEssage" + DateTime.Now,
                 Category = "ERROR",
