@@ -18,7 +18,14 @@ namespace SethWebster.OpenLogging.Client
         protected Uri _endpoint = new Uri("https://openlogger.azurewebsites.net/api");
         private AuthorizationTicket _ticket = new AuthorizationTicket();
 
+        /// <summary>
+        /// The current endpoint for API interactions
+        /// </summary>
         public Uri EndPoint { get { return _endpoint; } }
+        
+        /// <summary>
+        /// When overridden, provides the AuthenticationKind (client or account)
+        /// </summary>
         protected abstract string AuthenticationKind { get; }
         public OpenLoggingClientBase()
         {
@@ -45,13 +52,11 @@ namespace SethWebster.OpenLogging.Client
             get { return _clientApiKey; }
             protected set { _clientApiKey = value; }
         }
-
         protected TReturn PerformAction<TInput, TReturn>(string actionUrl, HttpMethod method, TInput input, bool requiresAuth)
         {
             var x = AsyncHelpers.RunSync<TReturn>(() => PerformActionAsync<TInput, TReturn>(actionUrl, method, input, requiresAuth)); ;
             return x;
         }
-
         protected async Task<TReturn> PerformActionAsync<TInput, TReturn>(string actionUrl, HttpMethod method, TInput input, bool requiresAuth)
         {
             var cli = CreateHttpClient(requiresAuth);
@@ -89,7 +94,6 @@ namespace SethWebster.OpenLogging.Client
         {
             return await PerformActionAsync<int, T>(actionUrl, HttpMethod.Delete, itemId, requiresAuth);
         }
-
         protected HttpClient CreateHttpClient(bool requiresAuth)
         {
             var cli = new HttpClient();
@@ -101,7 +105,6 @@ namespace SethWebster.OpenLogging.Client
             }
             return cli;
         }
-
         protected async Task EnsureAuthTicket()
         {
             ValidateApiKey();
