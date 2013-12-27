@@ -49,6 +49,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Async\AsyncHelpers.cs" />
     <Compile Include="AuthorizationTicket.cs" />
     <Compile Include="OpenLoggingAccountClient.cs" />
     <Compile Include="OpenLoggingClientBase.cs" />

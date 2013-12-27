@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using SethWebster.OpenLogging.Client.Async;
 using SethWebster.OpenLogging.Models;
 using System;
 using System.Collections.Generic;
@@ -45,7 +46,13 @@ namespace SethWebster.OpenLogging.Client
             protected set { _clientApiKey = value; }
         }
 
-        protected async Task<TReturn> PerformAction<TInput, TReturn>(string actionUrl, HttpMethod method, TInput input, bool requiresAuth)
+        protected TReturn PerformAction<TInput, TReturn>(string actionUrl, HttpMethod method, TInput input, bool requiresAuth)
+        {
+            var x = AsyncHelpers.RunSync<TReturn>(() => PerformActionAsync<TInput, TReturn>(actionUrl, method, input, requiresAuth)); ;
+            return x;
+        }
+
+        protected async Task<TReturn> PerformActionAsync<TInput, TReturn>(string actionUrl, HttpMethod method, TInput input, bool requiresAuth)
         {
             var cli = CreateHttpClient(requiresAuth);
             HttpResponseMessage response = null;
@@ -66,14 +73,21 @@ namespace SethWebster.OpenLogging.Client
             return message2;
 
         }
-        protected async Task<TReturn> CreateItem<TInput, TReturn>(string actionUrl, TInput item, bool requiresAuth)
+        protected TReturn CreateItem<TInput, TReturn>(string actionUrl, TInput item, bool requiresAuth)
         {
-            return await PerformAction<TInput, TReturn>(actionUrl, HttpMethod.Post, item, requiresAuth);
+            return PerformAction<TInput, TReturn>(actionUrl, HttpMethod.Post, item, requiresAuth);
         }
-
-        protected async Task<T> DeleteItem<T>(string actionUrl, int itemId, bool requiresAuth)
+        protected async Task<TReturn> CreateItemAsync<TInput, TReturn>(string actionUrl, TInput item, bool requiresAuth)
         {
-            return await PerformAction<int, T>(actionUrl, HttpMethod.Delete, itemId, requiresAuth);
+            return await PerformActionAsync<TInput, TReturn>(actionUrl, HttpMethod.Post, item, requiresAuth);
+        }
+        protected T DeleteItem<T>(string actionUrl, int itemId, bool requiresAuth)
+        {
+            return PerformAction<int, T>(actionUrl, HttpMethod.Delete, itemId, requiresAuth);
+        }
+        protected async Task<T> DeleteItemAsync<T>(string actionUrl, int itemId, bool requiresAuth)
+        {
+            return await PerformActionAsync<int, T>(actionUrl, HttpMethod.Delete, itemId, requiresAuth);
         }
 
         protected HttpClient CreateHttpClient(bool requiresAuth)
@@ -96,7 +110,7 @@ namespace SethWebster.OpenLogging.Client
                 Console.WriteLine("Ticket Expired, Retrieving...");
                 HttpClient cli = new HttpClient();
                 cli.BaseAddress = _endpoint;
-                _ticket = await PerformAction<TokenLoginModel, AuthorizationTicket>(
+                _ticket = await PerformActionAsync<TokenLoginModel, AuthorizationTicket>(
                     "/api/auth/token",
                    HttpMethod.Post, new TokenLoginModel()
                    {

@@ -25,14 +25,25 @@ namespace SethWebster.OpenLogging.Client
 
         }
 
-        public async Task<SethWebster.OpenLogging.Models.Client> CreateClient(SethWebster.OpenLogging.Models.Client client)
+        public SethWebster.OpenLogging.Models.Client CreateClient(SethWebster.OpenLogging.Models.Client client)
         {
-            var res = await CreateItem<object, SethWebster.OpenLogging.Models.Client>("/api/clients", new { client.ClientName }, true);
+            var res = CreateItem<object, SethWebster.OpenLogging.Models.Client>("/api/clients", new { client.ClientName }, true);
             return (SethWebster.OpenLogging.Models.Client)res;
         }
-        public async Task<SethWebster.OpenLogging.Models.Client> DeleteClient(SethWebster.OpenLogging.Models.Client client)
+        public async Task<SethWebster.OpenLogging.Models.Client> CreateClientAsync(SethWebster.OpenLogging.Models.Client client)
         {
-            var res = await DeleteItem<SethWebster.OpenLogging.Models.Client>("/api/clients", client.ClientId, true);
+            var res = await CreateItemAsync<object, SethWebster.OpenLogging.Models.Client>("/api/clients", new { client.ClientName }, true);
+            return (SethWebster.OpenLogging.Models.Client)res;
+        }
+        public SethWebster.OpenLogging.Models.Client DeleteClient(SethWebster.OpenLogging.Models.Client client)
+        {
+            var res =  DeleteItem<SethWebster.OpenLogging.Models.Client>("/api/clients", client.ClientId, true);
+            return res;
+        }
+
+        public async Task<SethWebster.OpenLogging.Models.Client> DeleteClientAsync(SethWebster.OpenLogging.Models.Client client)
+        {
+            var res = await DeleteItemAsync<SethWebster.OpenLogging.Models.Client>("/api/clients", client.ClientId, true);
             return res;
         }
         public async Task<SethWebster.OpenLogging.Models.Client> GetClient(string name)

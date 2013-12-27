@@ -27,9 +27,9 @@ namespace SethWebster.OpenLogging.Client
         {
 
         }
-        public async Task<LogMessage> NewLogEntry(LogMessage message)
+        public async  Task<LogMessage> NewLogEntry(LogMessage message)
         {
-            var res = await CreateItem<LogMessage, LogMessage>("/api/log", message, true);
+            var res = await CreateItemAsync<LogMessage, LogMessage>("/api/log", message, true);
             return res;
         }
 

@@ -24,7 +24,7 @@ namespace SethWebster.OpenLogging.Console
             Guid accountApiKey = new Guid("2d9557a1-1be5-44ab-9b9b-1ec26d79d2b0");
             OpenLoggingAccountClient acctClient = new OpenLoggingAccountClient(accountApiKey, new Uri(uri));
 
-            var client = await acctClient.CreateClient(new Models.Client()
+            var client = await acctClient.CreateClientAsync(new Models.Client()
             {
                 ClientName = "The Test Client"
             });
@@ -39,7 +39,7 @@ namespace SethWebster.OpenLogging.Console
                 DateOfEvent = DateTimeOffset.Now.AddSeconds(-25)
             });
             Writeline("All created. ENTER to Delete"); Readline();
-            await acctClient.DeleteClient(client);
+            await acctClient.DeleteClientAsync(client);
             return entry;
 
 
@@ -60,14 +60,14 @@ namespace SethWebster.OpenLogging.Console
         private static async Task<Models.Client> DeleteClient(Models.Client client, OpenLoggingAccountClient cl)
         {
             Writeline("Deleting Client #" + client.ClientId);
-            var res = await cl.DeleteClient(client);
+            var res = await cl.DeleteClientAsync(client);
             return res;
         }
 
         private static async Task<LogMessage> CreateLogEntry(string uri, OpenLoggingClient cl2)
         {
             Writeline("Creating Log Message Entry ...");
-
+            
             var logRes = await cl2.NewLogEntry(new LogMessage()
             {
                 Title = "New Log MEssage" + DateTime.Now,
@@ -82,7 +82,7 @@ namespace SethWebster.OpenLogging.Console
         private static async Task<Models.Client> CreateClient(string uri, OpenLoggingAccountClient cl)
         {
             Writeline("Creating Client...");
-            var clientCreationResult = await cl.CreateClient(new SethWebster.OpenLogging.Models.Client() { ClientName = "Southwest" });
+            var clientCreationResult = await cl.CreateClientAsync(new SethWebster.OpenLogging.Models.Client() { ClientName = "Southwest" });
             Writeline("Created Client #" + clientCreationResult.ClientId);
             return clientCreationResult;
         }
