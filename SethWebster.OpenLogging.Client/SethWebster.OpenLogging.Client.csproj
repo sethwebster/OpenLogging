@@ -51,6 +51,7 @@
   <ItemGroup>
     <Compile Include="Async\AsyncHelpers.cs" />
     <Compile Include="AuthorizationTicket.cs" />
+    <Compile Include="Exceptions\HttpResponseException.cs" />
     <Compile Include="OpenLoggingAccountClient.cs" />
     <Compile Include="OpenLoggingClientBase.cs" />
     <Compile Include="OpenLoggingClient.cs" />

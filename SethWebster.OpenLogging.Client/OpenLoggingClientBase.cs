@@ -1,8 +1,10 @@
 ﻿using Newtonsoft.Json;
 using SethWebster.OpenLogging.Client.Async;
+using SethWebster.OpenLogging.Client.Exceptions;
 using SethWebster.OpenLogging.Models;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
@@ -22,7 +24,7 @@ namespace SethWebster.OpenLogging.Client
         /// The current endpoint for API interactions
         /// </summary>
         public Uri EndPoint { get { return _endpoint; } }
-        
+
         /// <summary>
         /// When overridden, provides the AuthenticationKind (client or account)
         /// </summary>
@@ -54,8 +56,9 @@ namespace SethWebster.OpenLogging.Client
         }
         protected TReturn PerformAction<TInput, TReturn>(string actionUrl, HttpMethod method, TInput input, bool requiresAuth)
         {
-            var x = AsyncHelpers.RunSync<TReturn>(() => PerformActionAsync<TInput, TReturn>(actionUrl, method, input, requiresAuth)); ;
-            return x;
+            var item = PerformActionAsync<TInput, TReturn>(actionUrl, method, input, requiresAuth);
+            Task.WaitAll(item);
+            return item.Result;
         }
         protected async Task<TReturn> PerformActionAsync<TInput, TReturn>(string actionUrl, HttpMethod method, TInput input, bool requiresAuth)
         {
@@ -73,9 +76,19 @@ namespace SethWebster.OpenLogging.Client
                     response = await cli.DeleteAsync(actionUrl + "/" + input);
                     break;
             }
-            var strRes = await response.Content.ReadAsStringAsync();
-            var message2 = JsonConvert.DeserializeObject<TReturn>(strRes);
-            return message2;
+
+            if (response.IsSuccessStatusCode)
+            {
+                var strRes = await response.Content.ReadAsStringAsync();
+
+                var message2 = JsonConvert.DeserializeObject<TReturn>(strRes);
+                return message2;
+            }
+            else
+            {
+                throw new HttpResponseException(response.StatusCode, response.ReasonPhrase);
+            }
+
 
         }
         protected TReturn CreateItem<TInput, TReturn>(string actionUrl, TInput item, bool requiresAuth)
@@ -110,18 +123,27 @@ namespace SethWebster.OpenLogging.Client
             ValidateApiKey();
             if (_ticket.IsExpired)
             {
-                Console.WriteLine("Ticket Expired, Retrieving...");
-                HttpClient cli = new HttpClient();
-                cli.BaseAddress = _endpoint;
-                _ticket = await PerformActionAsync<TokenLoginModel, AuthorizationTicket>(
-                    "/api/auth/token",
-                   HttpMethod.Post, new TokenLoginModel()
-                   {
-                       Apikey = _clientApiKey,
-                       Kind = AuthenticationKind
-                   }, false);
+                try
+                {
+                    Trace.WriteLine("Ticket Expired, Retrieving...");
+                    HttpClient cli = new HttpClient();
+                    cli.BaseAddress = _endpoint;
+                    _ticket = await PerformActionAsync<TokenLoginModel, AuthorizationTicket>(
+                        "/api/auth/token",
+                       HttpMethod.Post, new TokenLoginModel()
+                       {
+                           Apikey = _clientApiKey,
+                           Kind = AuthenticationKind
+                       }, false);
 
-                Console.WriteLine("Ticket Received: {0} {1} {2}", _ticket.Username, _ticket.AccessToken, _ticket.Expires);
+                    Trace.WriteLine(string.Format("Ticket Received: {0} {1} {2}", _ticket.Username, _ticket.AccessToken, _ticket.Expires));
+
+                }
+                catch (HttpResponseException hrex)
+                {
+                    Console.WriteLine(hrex);
+
+                }
             }
 
         }

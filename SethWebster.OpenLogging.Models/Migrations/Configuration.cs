@@ -1,10 +1,10 @@
 namespace SethWebster.OpenLogging.Models.Migrations
 {
     using SethWebster.OpenLogging.Models;
-using System;
-using System.Data.Entity;
-using System.Data.Entity.Migrations;
-using System.Linq;
+    using System;
+    using System.Data.Entity;
+    using System.Data.Entity.Migrations;
+    using System.Linq;
 
     public sealed class Configuration : DbMigrationsConfiguration<DBContext>
     {
@@ -26,7 +26,6 @@ using System.Linq;
             //      new Person { FullName = "Brice Lambson" },
             //      new Person { FullName = "Rowan Miller" }
             //    );
-            //
         }
     }
 }

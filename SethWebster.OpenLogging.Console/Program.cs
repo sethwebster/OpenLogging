@@ -21,16 +21,18 @@ namespace SethWebster.OpenLogging.Console
             uri = "http://openlogger/api/";
             // Uncomment this line when not using Fiddler
             // uri = "http://localhost:60757/api/";
-            Guid accountApiKey = new Guid("2d9557a1-1be5-44ab-9b9b-1ec26d79d2b0");
+
+            // This ID must already exist
+            Guid accountApiKey = new Guid("90a1de78-cd4d-4b7e-a356-7e6e3fb01be3");
             OpenLoggingAccountClient acctClient = new OpenLoggingAccountClient(accountApiKey, new Uri(uri));
 
-            var client = await acctClient.CreateClientAsync(new Models.Client()
+            var client =  acctClient.CreateClient(new Models.Client()
             {
                 ClientName = "The Test Client"
             });
 
             OpenLoggingClient logClient = new OpenLoggingClient(client.CurrentApiKey, new Uri(uri));
-            var entry = await logClient.NewLogEntryAsync(new LogMessage()
+            var entry =  logClient.NewLogEntry(new LogMessage()
             {
                 Title = "The Test Log Entry",
                 Message = "This is the message",
@@ -39,7 +41,7 @@ namespace SethWebster.OpenLogging.Console
                 DateOfEvent = DateTimeOffset.Now.AddSeconds(-25)
             });
             Writeline("All created. ENTER to Delete"); Readline();
-            await acctClient.DeleteClientAsync(client);
+            acctClient.DeleteClient(client);
             return entry;
 
 
@@ -95,15 +97,16 @@ namespace SethWebster.OpenLogging.Console
                 try
                 {
                     Task.WaitAll(item);
+                    Writeline(item.Result.LogMessageId);
                 }
                 catch (Exception e)
                 {
                     Writeline("ERROR: " + e.GetBaseException());
                 }
-                Writeline(item.Result.LogMessageId);
                 Writeline("Press ENTER to repeat");
                 Readline();
             }
+          
         }
 
         static string Readline() { return System.Console.ReadLine(); }
